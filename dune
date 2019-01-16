@@ -1,0 +1,17 @@
+(ocamllex lexer)
+
+(menhir
+  (modules parser)
+  (flags --explain)
+)
+
+(executable
+  (name joujou)
+  (libraries base pprint)
+  (flags -rectypes)
+)
+
+
+
+
+
