@@ -952,8 +952,8 @@ end
 
   let mulC =    
     let mul' (a, b) = 
-      let scale_ab = C.scale a, C.scale b in 
-      (M.mulC (a,b), CoC.join C.ok_t C.ok_t C.ok_t scale_ab)
+      let scale_ba = C.scale b, C.scale a in 
+      (M.mulC (a, b), CoC.join C.ok_t C.ok_t C.ok_t scale_ba)
     in D mul'
 
   let sinC = 

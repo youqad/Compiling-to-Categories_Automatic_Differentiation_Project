@@ -135,7 +135,7 @@ let test () =
         ]
   );
 
-  check "Derivative of x,y -> x * y" (fun () ->
+  check "Derivative of λ(x, y). x * y" (fun () ->
   (fun ((x,y),(dx,dy)) ->
       snd (apply (mulC,(x,y)) (dx, dy)) = 
           x *. dy +. y *. dx)
