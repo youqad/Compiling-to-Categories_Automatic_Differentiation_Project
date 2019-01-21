@@ -133,4 +133,20 @@ let test () =
           ((1., 0.), (epsilon, 0.));
           ((1., 0.), (0., epsilon))
         ]
-  )
+  );
+
+  check "Derivative of x,y -> x * y" (fun () ->
+  (fun ((x,y),(dx,dy)) ->
+      snd (apply (mulC,(x,y)) (dx, dy)) = 
+          x *. dy +. y *. dx)
+  @@
+    [ ((1., 1.), (epsilon, epsilon));
+      ((1., 1.), (epsilon, 0.));
+      ((1., 1.), (0., epsilon));
+      ((0., 1.), (epsilon, epsilon));
+      ((0., 1.), (epsilon, 0.));
+      ((0., 1.), (0., epsilon));
+      ((1., 0.), (epsilon, epsilon));
+      ((1., 0.), (epsilon, 0.));
+      ((1., 0.), (0., epsilon))
+    ])
