@@ -939,18 +939,19 @@ end
   (*             Then, run `make -C tests/task-1`.   *)
   (*-------------------------------------------------*)
 
-  module M = LambdaNumCatFromNum (C.Num)
-  module CoC = CoCartesianCatDerivedOperations (C)
-
   let todo = D (fun _ -> failwith "Students! This is your job!")
 
   let negC = 
+    let module M = (LambdaNumCatFromNum (C.Num)) in
     linearD (M.negC) (C.negC)
 
   let addC =
+    let module M = (LambdaNumCatFromNum (C.Num)) in
     linearD (M.addC) (C.addC)
 
-  let mulC =    
+  let mulC =
+    let module M = (LambdaNumCatFromNum (C.Num)) in
+    let module CoC = (CoCartesianCatDerivedOperations (C)) in
     let mul' (a, b) = 
       let scale_ab = C.scale a, C.scale b in 
       (M.mulC (a,b), CoC.join C.ok_t C.ok_t C.ok_t scale_ab)
@@ -962,6 +963,7 @@ end
     in D sin'
 
   let cosC =
+    let module M = (LambdaNumCatFromNum (C.Num)) in
     let cos' a = 
       let sin_a = Floating.sin a in
       (Floating.cos a, C.scale (M.negC sin_a))
@@ -974,6 +976,7 @@ end
     in D exp'
 
   let invC =
+    let module M = (LambdaNumCatFromNum (C.Num)) in
     let inv' a = 
       let inv_a = Floating.inv a in
       let sqr_inv_a = M.mulC (inv_a, inv_a) in 
@@ -1049,6 +1052,7 @@ end
   (*             Then, run `make -C tests/task-1`.   *)
   (*-------------------------------------------------*)
 
+  
   let id oka =
     failwith "Students! This is your job!"
 
