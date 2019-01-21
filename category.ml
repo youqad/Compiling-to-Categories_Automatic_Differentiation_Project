@@ -1049,43 +1049,44 @@ end
   (*             Then, run `make -C tests/task-1`.   *)
   (*-------------------------------------------------*)
 
+
   let id oka =
-    failwith "Students! This is your job!"
+    cont oka oka (C.id oka)
 
   let compose oka okb okc (Cont g) (Cont f) =
-    failwith "Students! This is your job!"
+    Cont (f ** g)
 
   let pair oka okb okc okd (Cont f) (Cont g) =
-    failwith "Students! This is your job!"
+    Cont (AFD.join R.okr oka okb ** LambdaCat.pair () () () () f g ** AFD.unjoin R.okr okc okd)
 
   let exl (type a b) (oka : a C.ok) (okb : b C.ok) : (a * b, a) k =
-    failwith "Students! This is your job!"
+    cont (ok_pair oka okb) oka (C.exl oka okb)
 
   let exr (type a b) (oka : a C.ok) (okb : b C.ok) : (a * b, b) k =
-    failwith "Students! This is your job!"
+    cont (ok_pair oka okb) okb (C.exr oka okb)
 
   let dup (type a) (oka : a C.ok) : (a, a * a) k =
-    failwith "Students! This is your job!"
+    cont oka (ok_pair oka oka) (C.dup oka)
 
   let inl (type a b) (oka : a C.ok) (okb : b C.ok) : (a, a * b) k =
-    failwith "Students! This is your job!"
+    cont oka (ok_pair oka okb) (C.inl oka okb)
 
   let inr (type a b) (oka : a C.ok) (okb : b C.ok) : (b, a * b) k =
-    failwith "Students! This is your job!"
+    cont okb (ok_pair oka okb) (C.inr oka okb)
 
   let jam (type a) (oka : a C.ok) : (a * a, a) k =
-    failwith "Students! This is your job!"
+    cont (ok_pair oka oka) oka (C.jam oka)
 
   let ok_unit = C.ok_unit
 
   let ti oka =
-    failwith "Students! This is your job!"
+    cont ok_unit oka (C.ti oka)
 
   let it oka =
-    failwith "Students! This is your job!"
+    cont oka ok_unit (C.it oka)
 
   let unit_arrow (type a) (oka : a ok) (x : a) : (unit, a) k =
-    failwith "Students! This is your job!"
+    cont ok_unit oka (C.unit_arrow oka x)
 
 end
 
@@ -1116,7 +1117,7 @@ struct
   include ContinuationCategoryTransformer (C) (R)
   type t = C.t
   let scale s =
-    failwith "Students! This is your job!"
+    cont C.ok_t C.ok_t (C.scale s)
 end
 
 (**
