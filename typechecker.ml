@@ -61,20 +61,20 @@ let find_exn id contxt pos msg = match IdMap.find id contxt with
 let check_program (source : program_with_locations) : program_with_locations =
    let msg_in_which_term top_level_term = match top_level_term with
    | None -> ""
-   | Some t' -> "Inside " ^ (string_of_term' (Position.value t')) ^ " :: " in
-   let err_msg ?t t' typ_t' str_typ_expected =  
-      msg_in_which_term t ^ start_err_msg 
+   | Some t' -> "Inside \n" ^ (string_of_term' (Position.value t')) ^ "\n :: " in
+   let err_msg ?top_level_term t' typ_t' str_typ_expected =  
+      msg_in_which_term top_level_term ^ start_err_msg 
       ^ (string_of_term' (Position.value t'))
       ^ " has type " ^ (string_of_type typ_t') 
       ^ " instead of the expected type " ^ str_typ_expected in
-   let err_msg_var ?t id_var = 
-      msg_in_which_term t ^ start_err_msg 
+   let err_msg_var ?top_level_term id_var = 
+      msg_in_which_term top_level_term ^ start_err_msg 
       ^ " type of variable " ^ id_var ^ " not  specified" in
    let rec get_type ?top_level_term contxt (term: term' Position.located) =
       let get_type_rec = get_type ?top_level_term in
       let pos_term, val_term = Position.position term, Position.value term in
       match Position.value term with
-      | Var ((Id id_x) as x) -> find_exn x contxt pos_term (err_msg_var id_x)
+      | Var ((Id id_x) as x) -> find_exn x contxt pos_term (err_msg_var ?top_level_term id_x)
       | Literal (Float _) -> TyConstant TyFloat
       | Primitive p -> ( let ty_float = TyConstant TyFloat in
          match p with
@@ -87,13 +87,13 @@ let check_program (source : program_with_locations) : program_with_locations =
          let typ_b = get_type_rec contxt b in
          let typ_a_input, typ_a_output = (
             match typ_a with
-            | TyArrow (a_in, a_out) -> a_out, a_out
+            | TyArrow (a_in, a_out) -> a_in, a_out
             | _ -> 
                let str_expected_type = "(" ^ string_of_type typ_b ^ ") -> 'a" in
-               type_err (err_msg a typ_a str_expected_type)
+               type_err (err_msg ?top_level_term a typ_a str_expected_type)
          ) in
          if typ_a_input = typ_b then typ_a_output
-         else type_err (err_msg b typ_b (string_of_type typ_a_input))
+         else type_err (err_msg ?top_level_term b typ_b (string_of_type typ_a_input))
       | Lam ((id_b, typ_b), t) -> 
          let new_contxt = IdMap.add id_b typ_b contxt in
          let typ_t = get_type_rec new_contxt t in 
@@ -106,7 +106,7 @@ let check_program (source : program_with_locations) : program_with_locations =
             | TyPair (a_left, _) -> a_left
             | _ ->
                let str_expected_type = "(" ^ string_of_type typ_a ^ ") * 'a" in
-               type_err (err_msg a typ_a str_expected_type)
+               type_err (err_msg ?top_level_term a typ_a str_expected_type)
          )
       | Snd a -> 
          let type_err = type_error pos_term in
@@ -115,7 +115,7 @@ let check_program (source : program_with_locations) : program_with_locations =
             | TyPair (_, a_right) -> a_right
             | _ -> 
                let str_expected_type = "'a * (" ^ string_of_type typ_a ^ ")" in
-               type_err (err_msg a typ_a str_expected_type)
+               type_err (err_msg ?top_level_term a typ_a str_expected_type)
          )
    in let check_type ?top_level_term contxt (bt: (binding Position.located * term' Position.located)) =
       let b, t = bt in
