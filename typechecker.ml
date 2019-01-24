@@ -98,7 +98,7 @@ let check_program (source : program_with_locations) : program_with_locations =
          let new_contxt = IdMap.add id_b typ_b contxt in
          let typ_t = get_type_rec new_contxt t in 
          TyArrow (typ_b, typ_t)
-      | Pair (a, b) -> TyPair (get_type_rec contxt a, get_type_rec contxt a)
+      | Pair (a, b) -> TyPair (get_type_rec contxt a, get_type_rec contxt b)
       | Fst a -> 
          let type_err = type_error pos_term in
          let typ_a = get_type_rec contxt a in (
@@ -152,7 +152,13 @@ let rec eta_expanse_term' ?(ind_new_binder=0) (term: term' Position.located) typ
     toplevel and turns them into eta-long forms if needed. *)
 let eta_expanse : program_with_locations -> program_with_locations =
   fun source -> List.map (
-     function (b', t') -> b', eta_expanse_term' t' (snd (Position.value b'))
+     function (b', t') -> let b'_id, b'_typ = Position.value b' in
+     match b'_typ with
+     | TyArrow _ -> b', eta_expanse_term' t' (snd (Position.value b'))
+     | _ -> let Id b'_str = b'_id in 
+         type_error (Position.position b') 
+            ("Term " ^ b'_str ^ " of type " ^ (string_of_type b'_typ) 
+            ^ " forbidden: only functions are allowed at toplevel")
      ) source
 
 let program : program_with_locations -> program_with_locations = fun source ->
