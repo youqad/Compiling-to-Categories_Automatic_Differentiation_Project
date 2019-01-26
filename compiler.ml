@@ -12,6 +12,8 @@ let rec ok_type = function
 (** left comb tree data type to encode the [ok] properties of the input type *)
 type leaf
 type node
+type node_arrow
+type node_pair
 
 type _ ok_input_tree = 
    | Leaf : identifier * ok -> leaf ok_input_tree
@@ -20,7 +22,8 @@ type _ ok_input_tree =
 (** right comb tree data type to encode the [ok] properties of the output type *)
 type _ ok_output_tree =
    | Leaf : ok -> leaf ok_output_tree
-   | Node : leaf ok_output_tree * ok * _ ok_output_tree -> node ok_output_tree
+   | Node_arrow : leaf ok_output_tree * ok * _ ok_output_tree -> node_arrow ok_output_tree
+   | Node_pair : _ ok_output_tree * ok * _ ok_output_tree -> node_pair ok_output_tree
 
 (** existential_wrapper *)
 type wrapped_ok_tree = Wrap : _ ok_output_tree -> wrapped_ok_tree
@@ -35,15 +38,18 @@ let ok_intput_tree_get_ok : type a. a ok_input_tree -> ok =
    | Leaf (_, ok) -> ok
    | Node (_, ok, _) -> ok
 
-let ok_output_tree_add : type a. a ok_output_tree -> ok -> node ok_output_tree =
+let ok_output_tree_add : type a. a ok_output_tree -> ok -> node_arrow ok_output_tree =
    fun ok_output ok -> match ok_output with
-   | Leaf ok1 as l -> Node (Leaf ok, OkPair (ok1, ok), l)
-   | Node (_, ok1, _) as n ->  Node (Leaf ok, OkArrow (ok1, ok), n)
+   | Leaf ok1 as l -> Node_arrow (Leaf ok, OkArrow (ok, ok1), l)
+   | Node_arrow (_, ok1, _) as n ->  Node_arrow (Leaf ok, OkArrow (ok, ok1), n)
+   | Node_pair (_, ok1, _) as n ->  Node_arrow (Leaf ok, OkArrow (ok, ok1), n)
+
    
 let ok_output_tree_get_ok : type a. a ok_output_tree -> ok =
    fun ok_output -> match ok_output with
    | Leaf ok -> ok
-   | Node (_, ok, _) -> ok
+   | Node_arrow (_, ok, _) -> ok
+   | Node_pair (_, ok, _) -> ok
 
 
 let rec get_variable_from_input_tree : type a. a ok_input_tree -> identifier -> t * ok = 
@@ -61,6 +67,7 @@ let rec get_variable_from_input_tree : type a. a ok_input_tree -> identifier -> 
 let check_program (source : program) : program =
    let rec get_combinator : type a. a ok_input_tree -> term -> Target.t * (wrapped_ok_tree) =
       fun ok_input_tree term -> 
+      let ok_input = ok_intput_tree_get_ok ok_input_tree in
       match term with
       | Var (id_x) -> 
          let combinator, ok_x = get_variable_from_input_tree ok_input_tree id_x in
@@ -68,26 +75,50 @@ let check_program (source : program) : program =
       | Literal (Float _ as l) -> Literal l, Wrap (Leaf OkFloat)
       | Primitive p -> Primitive p, Wrap (Leaf (OkArrow (OkFloat, OkFloat)))
       | App (a, b) -> 
-         let ok_input = ok_intput_tree_get_ok ok_input_tree in
          let comb_a, Wrap ok_output_tree_a = get_combinator ok_input_tree a in
          let comb_b, Wrap ok_output_tree_b = get_combinator ok_input_tree b in
          let ok_b = ok_output_tree_get_ok ok_output_tree_b in 
          let ok_a, ok_a_in, ok_a_out, wrap_ok_a_out_tree = (
             match ok_output_tree_a with 
-            | Node (Leaf ok_in, ok, (Leaf ok_out as out_tree)) -> ok, ok_in, ok_out, Wrap out_tree 
-            | Node (Leaf ok_in, ok, (Node(_, ok_out, _) as out_tree)) -> ok, ok_in, ok_out, Wrap out_tree
+            | Node_arrow (Leaf ok_in, ok, out_tree) -> ok, ok_in, ok_output_tree_get_ok out_tree, Wrap out_tree 
             | _ -> failwith "Typing problem: a term that don't have application type is applied to another one"
             ) in
          assert (ok_a_in = ok_b);
          Apply (ok_a_in, ok_a_out) @ (Fork (ok_input, ok_a, ok_b) @ comb_a @ comb_b), wrap_ok_a_out_tree
       |  Lam ((id_b, typ_b), t) ->
-         let ok_input = ok_intput_tree_get_ok ok_input_tree in
          let ok_typ_b = ok_type typ_b in
          let comb_t, Wrap ok_output_tree_t = 
             get_combinator (ok_input_tree_add ok_input_tree (id_b, ok_typ_b)) t in
          let ok_t = ok_output_tree_get_ok ok_output_tree_t in 
          Curry (ok_input, ok_typ_b, ok_t) @ comb_t, Wrap (ok_output_tree_add ok_output_tree_t ok_typ_b)
-      | _ -> failwith "test" in failwith "test"
+      | Pair (a, b) -> 
+         let comb_a, Wrap ok_output_tree_a = get_combinator ok_input_tree a in
+         let comb_b, Wrap ok_output_tree_b = get_combinator ok_input_tree b in
+         let ok_a = ok_output_tree_get_ok ok_output_tree_a in 
+         let ok_b = ok_output_tree_get_ok ok_output_tree_b in 
+         Fork (ok_input, ok_a, ok_b) @ comb_a @ comb_b, 
+         Wrap (Node_pair (ok_output_tree_a, OkPair (ok_a, ok_b),ok_output_tree_b))
+      | Fst a ->
+         let comb_a, Wrap ok_output_tree_a = get_combinator ok_input_tree a in
+         let ok_a = ok_output_tree_get_ok ok_output_tree_a in 
+         let ok_a_left, ok_a_right, wrap_ok_a_left = (
+            match ok_output_tree_a with 
+            | Node_pair (left_tree, ok, right_tree) -> ok_output_tree_get_ok left_tree, ok_output_tree_get_ok right_tree, Wrap left_tree 
+            | _ -> failwith "Typing problem: destructor Fst applied to a term that don't have pair type"
+            ) in 
+         Compose (ok_input, ok_a, ok_a_left) @ Exl (ok_a_left, ok_a_right) @ comb_a, 
+         wrap_ok_a_left 
+      | Snd a ->
+         let comb_a, Wrap ok_output_tree_a = get_combinator ok_input_tree a in
+         let ok_a = ok_output_tree_get_ok ok_output_tree_a in 
+         let ok_a_left, ok_a_right, wrap_ok_a_right = (
+            match ok_output_tree_a with 
+            | Node_pair (left_tree, ok, right_tree) -> ok_output_tree_get_ok left_tree, ok_output_tree_get_ok right_tree, Wrap right_tree 
+            | _ -> failwith "Typing problem: destructor Snd applied to a term that don't have pair type"
+            ) in 
+         Compose (ok_input, ok_a, ok_a_right) @ Exr (ok_a_left, ok_a_right) @ comb_a, 
+         wrap_ok_a_right  
+      in failwith "test"
       (* | Lam ((id_b, typ_b), t) -> 
          let new_contxt = IdMap.add id_b typ_b contxt in
          let typ_t = get_combinator_rec new_contxt t in 
