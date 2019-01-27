@@ -124,13 +124,13 @@ let check_program (source : program_with_locations) : program_with_locations =
       if typ_t = typ_expected then bt'
       else type_error (Position.position b) (err_msg t typ_t (string_of_type typ_expected))
    in
-   fst (List.fold_left (
+   List.rev (fst (List.fold_left (
       fun wt_bts bt' -> let well_typed_bts_list, well_typed_bts_map = wt_bts in
          let b', t' = bt' in
          let _ = check_type ~toplevel_term':t'  well_typed_bts_map bt' in
          let b'_id, b'_typ = Position.value b' in
          bt' :: well_typed_bts_list, IdMap.add b'_id b'_typ well_typed_bts_map
-      ) ([], IdMap.empty) source)
+      ) ([], IdMap.empty) source))
 
 let rec eta_expanse_term' ?(ind_new_binder=0) (term': term' Position.located) typ : term' Position.located =
    let pos_term, val_term' = Position.position term', Position.value term' in 
