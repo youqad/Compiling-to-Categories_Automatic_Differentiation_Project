@@ -28,6 +28,7 @@ type _ ok_output_tree =
 (** existential_wrapper *)
 type wrapped_ok_tree = Wrap : _ ok_output_tree -> wrapped_ok_tree
 
+
 let ok_input_tree_add : type a. a ok_input_tree -> identifier * ok -> node ok_input_tree =
    fun ok_input (id, ok) -> match ok_input with
    | Leaf (id1, ok1) as l -> Node (l, OkPair (ok1, ok), Leaf (id, ok))
@@ -64,7 +65,7 @@ let rec get_variable_from_input_tree : type a. a ok_input_tree -> identifier -> 
    | _ -> failwith "Variable not found in context."
 
 
-let rec get_combinator_with_context : type a. a ok_input_tree -> term -> Target.t * (wrapped_ok_tree) =
+let rec get_combinator_with_context : type a. a ok_input_tree -> term -> Target.t * wrapped_ok_tree =
    fun ok_input_tree term -> 
    let ok_input = ok_intput_tree_get_ok ok_input_tree in
    match term with
@@ -85,7 +86,7 @@ let rec get_combinator_with_context : type a. a ok_input_tree -> term -> Target.
             Wrap (Leaf (OkArrow (OkFloat, OkFloat)))
          | Add | Mul -> 
             constFun (Curry (OkFloat, OkFloat, OkFloat) @ (Primitive p)) (OkArrow (OkFloat, OkFloat)), 
-            Wrap (Leaf (OkArrow (OkFloat, OkArrow (OkFloat, OkFloat)))) (* Wrap (Leaf (OkArrow (OkPair (OkFloat, OkFloat), OkFloat))) *)
+            Wrap (Leaf (OkArrow (OkFloat, OkArrow (OkFloat, OkFloat))))
       )
    | App (a, b) -> 
       let comb_a, Wrap ok_output_tree_a = get_combinator_with_context ok_input_tree a in
@@ -137,11 +138,31 @@ let rec get_combinator_with_context : type a. a ok_input_tree -> term -> Target.
       (Compose (ok_input, ok_a, ok_a_right) @ Exr (ok_a_left, ok_a_right)) @ comb_a,
       wrap_ok_a_right
   
-let get_combinator : term -> t = function
+let get_combinator_init  : term -> t = function
    | Lam ((id_b, typ_b), t) -> fst (get_combinator_with_context (Leaf (id_b, ok_type typ_b)) t)
    | _ as term -> failwith ("Error: term " ^ string_of_term term ^ " not  in eta-expanded form.")
+  
+type wrapped_input = Wrap : _ ok_input_tree -> wrapped_input
   
 (** [source_to_categories translates a [source] in a [target] language
     made of categorical combinators. *)
 let source_to_categories : Source.program -> Target.program =
-   List.map (fun (b,t) -> (b, get_combinator t))
+   fun source ->
+   fst (List.fold_left (
+      fun (target_list, previous_bts_ok_tree) (b, t) -> 
+         match t with
+         | Lam ((id_x, typ_x), u) -> 
+            let id_b, typ_b = b in
+            let ok_b = ok_type typ_b in
+            let ok_x = ok_type typ_x in (
+            match previous_bts_ok_tree with 
+            | None -> 
+               let combinator, _ = get_combinator_with_context (Leaf (id_x, ok_x)) u in
+               (b, combinator) :: target_list, Some (Wrap (Leaf (id_b, ok_b)))
+            | Some (Wrap ok_input_tree) -> 
+               let combinator, _ = 
+                  get_combinator_with_context ok_input_tree t in
+               (b, combinator) :: target_list, Some (Wrap (ok_input_tree_add ok_input_tree (id_b, ok_b)))
+            )
+         | _ -> failwith ("Error: term " ^ string_of_term t ^ " not  in eta-expanded form.")
+      ) ([], None) source)

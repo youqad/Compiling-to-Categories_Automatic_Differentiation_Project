@@ -72,9 +72,9 @@ let check_program (source : program_with_locations) : program_with_locations =
       ^ " type of variable " ^ id_var ^ " not  specified" in
    let rec get_type ?toplevel_term' contxt (term': term' Position.located) =
       let get_type_rec = get_type ?toplevel_term' in
-      let pos_term, val_term = Position.position term', Position.value term' in
-      match Position.value term' with
-      | Var ((Id id_x) as x) -> find_exn x contxt pos_term (err_msg_var ?toplevel_term' id_x)
+      let pos_term', val_term' = Position.position term', Position.value term' in
+      match val_term' with
+      | Var ((Id id_x) as x) -> find_exn x contxt pos_term' (err_msg_var ?toplevel_term' id_x)
       | Literal (Float _) -> TyConstant TyFloat
       | Primitive p -> ( let ty_float = TyConstant TyFloat in
          match p with
@@ -82,7 +82,7 @@ let check_program (source : program_with_locations) : program_with_locations =
          | Add | Mul -> TyArrow (ty_float, TyArrow (ty_float, ty_float))
       )  
       | App (a, b) -> 
-         let type_err = type_error pos_term in
+         let type_err = type_error pos_term' in
          let typ_a = get_type_rec contxt a in
          let typ_b = get_type_rec contxt b in
          let typ_a_input, typ_a_output = (
@@ -100,7 +100,7 @@ let check_program (source : program_with_locations) : program_with_locations =
          TyArrow (typ_b, typ_t)
       | Pair (a, b) -> TyPair (get_type_rec contxt a, get_type_rec contxt b)
       | Fst a -> 
-         let type_err = type_error pos_term in
+         let type_err = type_error pos_term' in
          let typ_a = get_type_rec contxt a in (
             match typ_a with
             | TyPair (a_left, _) -> a_left
@@ -109,7 +109,7 @@ let check_program (source : program_with_locations) : program_with_locations =
                type_err (err_msg ?toplevel_term' a typ_a str_expected_type)
          )
       | Snd a -> 
-         let type_err = type_error pos_term in
+         let type_err = type_error pos_term' in
          let typ_a = get_type_rec contxt a in (
             match typ_a with
             | TyPair (_, a_right) -> a_right
@@ -128,13 +128,13 @@ let check_program (source : program_with_locations) : program_with_locations =
       fun wt_bts bt' -> let well_typed_bts_list, well_typed_bts_map = wt_bts in
          let b', t' = bt' in
          let _ = check_type ~toplevel_term':t'  well_typed_bts_map bt' in
-         let b_id, b_typ = Position.value b' in
-         bt' :: well_typed_bts_list, IdMap.add b_id b_typ well_typed_bts_map
+         let b'_id, b'_typ = Position.value b' in
+         bt' :: well_typed_bts_list, IdMap.add b'_id b'_typ well_typed_bts_map
       ) ([], IdMap.empty) source)
 
-let rec eta_expanse_term' ?(ind_new_binder=0) (term: term' Position.located) typ : term' Position.located =
-   let pos_term, val_term = Position.position term, Position.value term in 
-   match val_term, typ with  
+let rec eta_expanse_term' ?(ind_new_binder=0) (term': term' Position.located) typ : term' Position.located =
+   let pos_term, val_term' = Position.position term', Position.value term' in 
+   match val_term', typ with  
       | Lam (b, t), TyArrow (_, output) ->  
          Position.with_pos pos_term (Lam (b, eta_expanse_term' ~ind_new_binder t output))
       | t, TyArrow (input, output) -> 
@@ -143,15 +143,15 @@ let rec eta_expanse_term' ?(ind_new_binder=0) (term: term' Position.located) typ
          let new_b = (new_id, input) in
          let pos_app = Position.(join pos_term Position.dummy) in
          let pos_lam = Position.(join Position.dummy pos_term) in
-         let t' = Position.with_pos pos_app (App (term,  Position.with_pos Position.dummy (Var new_id))) in
+         let t' = Position.with_pos pos_app (App (term',  Position.with_pos Position.dummy (Var new_id))) in
          Position.with_pos pos_lam (Lam (new_b, eta_expanse_term' ~ind_new_binder t' output))
-      | _ -> term
+      | _ -> term'
 
 
 (** [eta_expanse source] makes sure that only functions are defined at
     toplevel and turns them into eta-long forms if needed. *)
 let eta_expanse : program_with_locations -> program_with_locations =
-  fun source -> List.map (
+  List.map (
      function (b', t') -> let b'_id, b'_typ = Position.value b' in
      match b'_typ with
      | TyArrow _ -> b', eta_expanse_term' t' (snd (Position.value b'))
@@ -159,7 +159,7 @@ let eta_expanse : program_with_locations -> program_with_locations =
          type_error (Position.position b') 
             ("Term " ^ b'_str ^ " of type " ^ (string_of_type b'_typ) 
             ^ " forbidden: only functions are allowed at toplevel")
-     ) source
+     ) 
 
 let program : program_with_locations -> program_with_locations = fun source ->
   let xsource = check_program source in
