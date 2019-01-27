@@ -12,7 +12,7 @@ end) = struct
   include CartesianCatDerivedOperations (C)
   open C
 let f = C.(
-id (ok_pair ok_float ok_float) (id (ok_pair ok_float ok_float))
-  (id (ok_pair ok_float ok_float) (id (ok_pair ok_float ok_float)))
+compose (ok_pair ok_float ok_float) (ok_pair ok_float ok_float) ok_float (exr ok_float ok_float)
+  (id (ok_pair ok_float ok_float))
 )
 end

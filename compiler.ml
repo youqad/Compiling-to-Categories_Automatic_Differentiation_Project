@@ -2,9 +2,9 @@ open Source
 open Target
 open Typechecker
 
-let ( @ ) combinator1 combinator1 = App (combinator1, combinator1)
+let ( @ ) combinator1 combinator2 = App (combinator1, combinator2)
 
-let rec ok_type = function 
+let rec ok_type = function  
    | TyConstant TyFloat -> OkFloat
    | TyArrow (input, ouput) -> OkArrow (ok_type input, ok_type ouput)
    | TyPair (lhs, rhs) -> OkPair (ok_type lhs, ok_type rhs)
@@ -60,7 +60,7 @@ let rec get_variable_from_input_tree : type a. a ok_input_tree -> identifier -> 
    | Node (Node (_, ok1, _), _, Leaf (id2, ok2)) when id_x = id2 -> Exr (ok1, ok2), ok2
    | Node (Node (_, ok1, _) as left_tree, ok, Leaf (_, ok2)) -> 
       let combinator, ok_var = get_variable_from_input_tree left_tree id_x in
-      Compose (ok, ok1, ok_var) @ combinator @ Exl (ok1, ok2), ok_var
+      (Compose (ok, ok1, ok_var) @ combinator) @ Exl (ok1, ok2), ok_var
    | _ -> failwith "Variable not found in context."
 
 
@@ -71,11 +71,21 @@ let rec get_combinator_with_context : type a. a ok_input_tree -> term -> Target.
    | Var (id_x) -> 
       let combinator, ok_x = get_variable_from_input_tree ok_input_tree id_x in
       combinator, Wrap (Leaf ok_x)
-   | Literal (Float _ as l) -> Literal l, Wrap (Leaf OkFloat)
-   | Primitive p -> Primitive p, 
-      (match p with
-         | Sin | Cos | Exp | Inv | Neg -> Wrap (Leaf (OkArrow (OkFloat, OkFloat)))
-         | Add | Mul -> Wrap (Leaf (OkArrow (OkFloat, OkArrow (OkFloat, OkFloat))))
+   | Literal (Float _ as l) -> 
+      let unit_arrow_combinator = UnitArrow OkFloat @ Literal l in
+      (Compose (ok_input, OkUnit, OkFloat) @ unit_arrow_combinator) @ It ok_input, 
+      Wrap (Leaf OkFloat)
+   | Primitive p -> 
+      let constFun f ok_f_out = 
+         let uncurried_combinator = (Compose (OkPair (ok_input, OkFloat), OkFloat, ok_f_out) @ f) @ Exr (ok_input, OkFloat) in
+         Curry (ok_input, OkFloat, ok_f_out) @ uncurried_combinator in (
+         match p with
+         | Sin | Cos | Exp | Inv | Neg -> 
+            constFun (Primitive p) OkFloat, 
+            Wrap (Leaf (OkArrow (OkFloat, OkFloat)))
+         | Add | Mul -> 
+            constFun (Curry (OkFloat, OkFloat, OkFloat) @ (Primitive p)) (OkArrow (OkFloat, OkFloat)), 
+            Wrap (Leaf (OkArrow (OkFloat, OkArrow (OkFloat, OkFloat)))) (* Wrap (Leaf (OkArrow (OkPair (OkFloat, OkFloat), OkFloat))) *)
       )
    | App (a, b) -> 
       let comb_a, Wrap ok_output_tree_a = get_combinator_with_context ok_input_tree a in
@@ -88,7 +98,8 @@ let rec get_combinator_with_context : type a. a ok_input_tree -> term -> Target.
          | _ -> failwith "Typing error: a term which doesn't have application type is applied to another one"
          ) in
       assert (ok_a_in = ok_b);
-      Compose (ok_input, OkPair (ok_a, ok_b), ok_b) @ Apply (ok_a_in, ok_a_out) @ (Fork (ok_input, ok_a, ok_b) @ comb_a @ comb_b), wrap_ok_a_out_tree
+      (Compose (ok_input, OkPair (ok_a, ok_b), ok_a_out) @ Apply (ok_a_in, ok_a_out)) @ ((Fork (ok_input, ok_a, ok_b) @ comb_a) @ comb_b), 
+      wrap_ok_a_out_tree
    |  Lam ((id_b, typ_b), t) ->
       let ok_typ_b = ok_type typ_b in
       let comb_t, Wrap ok_output_tree_t = 
@@ -101,7 +112,7 @@ let rec get_combinator_with_context : type a. a ok_input_tree -> term -> Target.
       let comb_b, Wrap ok_output_tree_b = get_combinator_with_context ok_input_tree b in
       let ok_a = ok_output_tree_get_ok ok_output_tree_a in 
       let ok_b = ok_output_tree_get_ok ok_output_tree_b in 
-      Fork (ok_input, ok_a, ok_b) @ comb_a @ comb_b, 
+      (Fork (ok_input, ok_a, ok_b) @ comb_a) @ comb_b, 
       Wrap (Node_pair (ok_output_tree_a, OkPair (ok_a, ok_b), ok_output_tree_b))
    | Fst a ->
       let comb_a, Wrap ok_output_tree_a = get_combinator_with_context ok_input_tree a in
@@ -112,7 +123,7 @@ let rec get_combinator_with_context : type a. a ok_input_tree -> term -> Target.
          | Leaf (OkPair (ok_left, ok_right)) -> ok_left, ok_right, Wrap (Leaf (ok_left))
          | _ -> failwith "Typing error: destructor Fst applied to a term that doesn't have pair type"
          ) in 
-      Compose (ok_input, ok_a, ok_a_left) @ Exl (ok_a_left, ok_a_right) @ comb_a, 
+      (Compose (ok_input, ok_a, ok_a_left) @ Exl (ok_a_left, ok_a_right)) @ comb_a, 
       wrap_ok_a_left 
    | Snd a ->
       let comb_a, Wrap ok_output_tree_a = get_combinator_with_context ok_input_tree a in
@@ -123,7 +134,7 @@ let rec get_combinator_with_context : type a. a ok_input_tree -> term -> Target.
          | Leaf (OkPair (ok_left, ok_right)) -> ok_left, ok_right, Wrap (Leaf (ok_right))         
          | _ -> failwith "Typing problem: destructor Snd applied to a term that don't have pair type"
          ) in 
-      Compose (ok_input, ok_a, ok_a_right) @ Exr (ok_a_left, ok_a_right) @ comb_a,
+      (Compose (ok_input, ok_a, ok_a_right) @ Exr (ok_a_left, ok_a_right)) @ comb_a,
       wrap_ok_a_right
   
 let get_combinator : term -> t = function

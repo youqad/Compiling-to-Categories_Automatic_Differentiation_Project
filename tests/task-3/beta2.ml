@@ -12,9 +12,10 @@ end) = struct
   include CartesianCatDerivedOperations (C)
   open C
 let f = C.(
-id ok_float (id ok_float) (id ok_float (id ok_float))
-  (id ok_float (id ok_float) (id ok_float (id ok_float)))
-  (id ok_float (id ok_float) (id ok_float (id ok_float))
-    (id ok_float (id ok_float) (id ok_float (id ok_float))))
+compose ok_float (ok_pair (ok_arrow ok_float ok_float) ok_float) ok_float
+  (apply ok_float ok_float)
+  (fork ok_float (ok_arrow ok_float ok_float) ok_float
+    (curry ok_float ok_float ok_float (exl ok_float ok_float))
+    (id ok_float))
 )
 end

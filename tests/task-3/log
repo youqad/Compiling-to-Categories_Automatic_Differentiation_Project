@@ -1,3 +1,0 @@
-File "sub.ml", line 15, characters 0-2:
-Error: This function has type 'a C.ok -> ('a, 'a) C.k
-       It is applied to too many arguments; maybe you forgot a `;'.

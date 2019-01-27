@@ -1,0 +1,1 @@
+let (incr : float -> float) = fun (x : float) -> 1. + x

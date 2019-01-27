@@ -12,6 +12,6 @@ end) = struct
   include CartesianCatDerivedOperations (C)
   open C
 let fsnd = C.(
-exr (ok_arrow ok_float ok_float) ok_float (exr (ok_arrow ok_float ok_float) ok_float)
+curry (ok_arrow ok_float ok_float) ok_float ok_float (exr (ok_arrow ok_float ok_float) ok_float)
 )
 end

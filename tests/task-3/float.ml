@@ -12,6 +12,6 @@ end) = struct
   include CartesianCatDerivedOperations (C)
   open C
 let zero = C.(
-0.
+compose ok_float ok_unit ok_float (unit_arrow ok_float 0.) (it ok_float)
 )
 end
