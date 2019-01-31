@@ -19,13 +19,17 @@ and morphism_t =
   | UnitArrowLit of ok * Source.literal
   | Primitive of Source.primitive
 and app_t =
-  | UnitArrow of ok * (seq flattened_composition)
   | Fork of ok * ok * ok * (seq flattened_composition) * (seq flattened_composition)
   | Curry of ok * ok * ok * (seq flattened_composition)
   | UnCurry of ok * ok * ok * (seq flattened_composition)
 
 (** existential_wrapper *)
 type wrapped_flattened = Wrap : _ flattened_composition -> wrapped_flattened
+
+let get_oks : type a. a flattened_composition -> ok * ok = function
+  | Seq (ok_in, ok_out, _) -> ok_in, ok_out
+  | Morph (ok_in, ok_out, _) -> ok_in, ok_out
+  | Appl (ok_in, ok_out, _) -> ok_in, ok_out
 
 let rec flattened_from_combinator : Target.t -> seq flattened_composition = function
   | Identity ok -> Seq (ok, ok, [Morph (ok, ok, Identity ok)])
@@ -169,6 +173,84 @@ let rec apply_rewriting_rules_once (seq_list: intern_node flattened_composition 
       | Appl _  -> Some (h' :: t'')
       )
     )
+
+let rec apply_rewriting_rules (seq: seq flattened_composition) = 
+  let Seq (ok_in, ok_out, seq_list) = seq in
+  let seq_list' =
+  List.map (
+    function
+      | (Morph _) as node -> node
+      | Appl (ok_in, ok_out, app_t) -> (
+        match app_t with
+        | Curry (oka, okb, okc, seq') -> 
+          let new_seq' = apply_rewriting_rules seq' in 
+          Appl (ok_in, ok_out, Curry (oka, okb, okc, new_seq'))
+        | UnCurry (oka, okb, okc, seq') ->
+          let new_seq' = apply_rewriting_rules seq' in 
+          Appl (ok_in, ok_out, UnCurry (oka, okb, okc, new_seq'))
+        | Fork (oka, okc, okd, seq', seq'') -> 
+          let new_seq' = apply_rewriting_rules seq' in 
+          let new_seq'' = apply_rewriting_rules seq'' in 
+          Appl (ok_in, ok_out, Fork (oka, okc, okd, new_seq', new_seq''))
+      ) 
+  ) seq_list in
+  let has_been_modified = ref true in 
+  let seq_list_ref = ref seq_list' in
+  while !has_been_modified do
+    let new_seq_list = apply_rewriting_rules_once !seq_list_ref in (
+      match new_seq_list with 
+      | None -> has_been_modified := false
+      | Some seq_list'' -> seq_list_ref := seq_list''
+    )
+  done; 
+  Seq (ok_in, ok_out, !seq_list_ref)
+
+let rec combinator_from_flattened : type a. a flattened_composition -> Target.t = function
+  | Seq (ok_in, ok_out, seq_list) -> (
+    match seq_list with
+    | [] -> Identity ok_in
+    | [node] -> combinator_from_flattened node
+    | h1 :: t -> 
+      let okh1_in, okh1_out = get_oks h1 in
+      let h1_comb = combinator_from_flattened h1 in
+      let t_comb = combinator_from_flattened (Seq (ok_in, okh1_in, t)) in
+      assert (okh1_out = ok_out); 
+      (Compose (ok_in, okh1_in, ok_out) ++ h1_comb) ++ t_comb
+    )
+  | Morph (ok_in, ok_out, morph) -> (
+    match morph with
+    | Identity ok -> Identity ok
+    | Apply (oka, okb) -> Apply (oka, okb)
+    | Exl (oka, okb) -> Exl (oka, okb)
+    | Exr (oka, okb) -> Exr (oka, okb)
+    | It ok -> It ok
+    | UnitArrowLit (ok, lit) -> UnitArrow OkFloat ++ Literal lit
+    | Primitive p -> Primitive p
+    )
+  | Appl (ok_in, ok_out, app) -> (
+    match app with 
+    | Fork (oka, okc, okd, seq1, seq2) -> 
+      let okseq1_in, okseq1_out = get_oks seq1 in
+      let okseq2_in, okseq2_out = get_oks seq2 in
+      let seq1_comb = combinator_from_flattened seq1 in
+      let seq2_comb = combinator_from_flattened seq2 in
+      assert (oka = okseq1_in && oka = okseq2_in); 
+      assert (okc = okseq1_out); assert (okd = okseq2_out);
+      (Fork (oka, okc, okd) ++ seq1_comb) ++ seq2_comb 
+    | Curry (oka, okb, okc, seq) -> 
+      let okseq_in, okseq_out = get_oks seq in
+      let seq_comb = combinator_from_flattened seq in
+      assert (okseq_in = OkPair(oka, okb)); 
+      assert (okseq_out = okc);
+      Curry (oka, okb, okc) ++ seq_comb
+    | UnCurry (oka, okb, okc, seq) -> 
+      let okseq_in, okseq_out = get_oks seq in
+      let seq_comb = combinator_from_flattened seq in
+      assert (okseq_in = oka); 
+      assert (okseq_out = OkArrow(okb, okc));
+      UnCurry (oka, okb, okc) ++ seq_comb
+    )
+
 
 (** [rewrite defs] applies category laws to remove [apply] and [curry]
     from the compiled programs. *)

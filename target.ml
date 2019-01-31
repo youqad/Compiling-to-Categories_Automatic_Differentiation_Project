@@ -20,3 +20,4 @@ and ok =
   | OkPair of ok * ok
   | OkArrow of ok * ok
 
+let ( ++ ) combinator1 combinator2 = App (combinator1, combinator2)

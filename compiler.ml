@@ -36,7 +36,6 @@ let string_of_ok t =
    PPrintEngine.ToBuffer.pretty 0.8 80 b (group (ty t));
    Buffer.contents b
 
-let ( ++ ) combinator1 combinator2 = App (combinator1, combinator2)
 
 let rec ok_type = function  
    | TyConstant TyFloat -> OkFloat
