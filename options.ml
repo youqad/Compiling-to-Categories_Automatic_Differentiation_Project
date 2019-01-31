@@ -2,7 +2,7 @@ let typecheck_only = ref false
 
 let without_oks = ref false
 
-let simplify = ref false
+let simplify = ref true
 
 let compact = ref false
 

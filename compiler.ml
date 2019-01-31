@@ -36,7 +36,7 @@ let string_of_ok t =
    PPrintEngine.ToBuffer.pretty 0.8 80 b (group (ty t));
    Buffer.contents b
 
-let ( @ ) combinator1 combinator2 = App (combinator1, combinator2)
+let ( ++ ) combinator1 combinator2 = App (combinator1, combinator2)
 
 let rec ok_type = function  
    | TyConstant TyFloat -> OkFloat
@@ -69,7 +69,7 @@ let rec get_variable_from_input_tree : type a. a ok_input_tree -> identifier -> 
    | Node (Node (_, ok1, _), _, Leaf (id2, ok2)) when id_x = id2 -> Exr (ok1, ok2), ok2
    | Node (Node (_, ok1, _) as left_tree, ok, Leaf (_, ok2)) -> 
       let combinator, ok_var = get_variable_from_input_tree left_tree id_x in
-      (Compose (ok, ok1, ok_var) @ combinator) @ Exl (ok1, ok2), ok_var
+      (Compose (ok, ok1, ok_var) ++ combinator) ++ Exl (ok1, ok2), ok_var
    | _ -> failwith "Variable not found in context."
 
 
@@ -77,8 +77,8 @@ let rec get_combinator_with_context : type a. a ok_input_tree -> term -> (Target
    fun ok_input_tree term previous_terms_map -> 
    let ok_input = ok_input_tree_get_ok ok_input_tree in
    let constFun f ok_f_in ok_f_out = 
-      let uncurried_combinator = (Compose (OkPair (ok_input, ok_f_in), ok_f_in, ok_f_out) @ f) @ Exr (ok_input, ok_f_in) in
-      Curry (ok_input, ok_f_in, ok_f_out) @ uncurried_combinator 
+      let uncurried_combinator = (Compose (OkPair (ok_input, ok_f_in), ok_f_in, ok_f_out) ++ f) ++ Exr (ok_input, ok_f_in) in
+      Curry (ok_input, ok_f_in, ok_f_out) ++ uncurried_combinator 
    in
    match term with
    | Var (id_x) -> (
@@ -93,8 +93,8 @@ let rec get_combinator_with_context : type a. a ok_input_tree -> term -> (Target
          combinator, ok_x
    )
    | Literal (Float _ as l) -> 
-      let unit_arrow_combinator = UnitArrow OkFloat @ Literal l in
-      (Compose (ok_input, OkUnit, OkFloat) @ unit_arrow_combinator) @ It ok_input, 
+      let unit_arrow_combinator = UnitArrow OkFloat ++ Literal l in
+      (Compose (ok_input, OkUnit, OkFloat) ++ unit_arrow_combinator) ++ It ok_input, 
       OkFloat
    | Primitive p -> (
          match p with
@@ -102,7 +102,7 @@ let rec get_combinator_with_context : type a. a ok_input_tree -> term -> (Target
             constFun (Primitive p) OkFloat OkFloat, 
             OkArrow (OkFloat, OkFloat)
          | Add | Mul -> 
-            constFun (Curry (OkFloat, OkFloat, OkFloat) @ (Primitive p)) OkFloat (OkArrow (OkFloat, OkFloat)), 
+            constFun (Curry (OkFloat, OkFloat, OkFloat) ++ (Primitive p)) OkFloat (OkArrow (OkFloat, OkFloat)), 
             OkArrow (OkFloat, OkArrow (OkFloat, OkFloat))
       )
    | App (a, b) -> 
@@ -117,18 +117,18 @@ let rec get_combinator_with_context : type a. a ok_input_tree -> term -> (Target
             ^ string_of_ok ok_b ^ " (ok_b = " ^ string_of_ok ok_b ^ ")")
          ) in
       assert (ok_a_in = ok_b);
-      (Compose (ok_input, OkPair (ok_a, ok_b), ok_a_out) @ Apply (ok_a_in, ok_a_out)) @ ((Fork (ok_input, ok_a, ok_b) @ comb_a) @ comb_b), 
+      (Compose (ok_input, OkPair (ok_a, ok_b), ok_a_out) ++ Apply (ok_a_in, ok_a_out)) ++ ((Fork (ok_input, ok_a, ok_b) ++ comb_a) ++ comb_b), 
       ok_a_out
    |  Lam ((id_b, typ_b), t) ->
       let ok_typ_b = ok_type typ_b in
       let comb_t, ok_t = 
          get_combinator_with_context (ok_input_tree_add ok_input_tree (id_b, ok_typ_b)) t previous_terms_map in
-      Curry (ok_input, ok_typ_b, ok_t) @ comb_t, 
+      Curry (ok_input, ok_typ_b, ok_t) ++ comb_t, 
       OkArrow (ok_typ_b, ok_t)
    | Pair (a, b) -> 
       let comb_a, ok_a = get_combinator_with_context ok_input_tree a previous_terms_map in
       let comb_b, ok_b = get_combinator_with_context ok_input_tree b previous_terms_map in
-      (Fork (ok_input, ok_a, ok_b) @ comb_a) @ comb_b, 
+      (Fork (ok_input, ok_a, ok_b) ++ comb_a) ++ comb_b, 
       OkPair (ok_a, ok_b)
    | Fst a ->
       let comb_a, ok_a = get_combinator_with_context ok_input_tree a previous_terms_map in
@@ -139,7 +139,7 @@ let rec get_combinator_with_context : type a. a ok_input_tree -> term -> (Target
             failwith ("Typing error: destructor Fst applied to the term a = " 
             ^ string_of_term a ^ " (ok_a = " ^  string_of_ok ok_a ^ ") which doesn't have pair type")
          ) in 
-      (Compose (ok_input, ok_a, ok_a_left) @ Exl (ok_a_left, ok_a_right)) @ comb_a, 
+      (Compose (ok_input, ok_a, ok_a_left) ++ Exl (ok_a_left, ok_a_right)) ++ comb_a, 
       ok_a_left 
    | Snd a ->
       let comb_a, ok_a = get_combinator_with_context ok_input_tree a previous_terms_map in
@@ -150,7 +150,7 @@ let rec get_combinator_with_context : type a. a ok_input_tree -> term -> (Target
             failwith ("Typing error: destructor Snd applied to the term a = " 
             ^ string_of_term a ^ " (ok_a = " ^  string_of_ok ok_a ^ ") which doesn't have pair type")
          ) in 
-      (Compose (ok_input, ok_a, ok_a_right) @ Exr (ok_a_left, ok_a_right)) @ comb_a,
+      (Compose (ok_input, ok_a, ok_a_right) ++ Exr (ok_a_left, ok_a_right)) ++ comb_a,
       ok_a_right
 
 (** existential_wrapper *)
