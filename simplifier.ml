@@ -155,37 +155,41 @@ let rec apply_rewriting_rules_once (seq_list: intern_node flattened_composition 
       -> 
       assert (ok_in = ok_out); 
       Some (Morph (ok_in, ok_in, Identity ok_in))
-    | Morph (ok_in, OkUnit, _) as morph -> 
+    | Morph (ok_in, OkUnit, _) as morph (** f : A -> unit = it *) -> 
       let it = Morph (ok_in, OkUnit, It ok_in) in 
       if it = morph then None
       else Some it
     | _ -> None 
     in
   let apply_binary_rules_once morph1 morph2 = match morph1, morph2 with
-    | f, Morph (_, _, Identity _)
-    | Morph (_, _, Identity _), f -> 
+    | f, Morph (_, _, Identity _) (** f . id = f *)
+    | Morph (_, _, Identity _), f (** id . f = f *) -> 
       Some (Wrap f)
-    | Morph (_, _, Exl (_, _)), Appl (_, _, Fork (_, _, _, seq, _)) -> 
+    | Morph (_, _, Exl (_, _)), Appl (_, _, Fork (_, _, _, seq, _)) (** Exl . (f Δ g) = f *) -> 
       Some (Wrap seq)
-    | Morph (_, _, Exr (_, _)), Appl (_, _, Fork (_, _, _, _, seq)) -> 
+    | Morph (_, _, Exr (_, _)), Appl (_, _, Fork (_, _, _, _, seq)) (** Exr . (f Δ g) = g *) -> 
       Some (Wrap seq)
-    | Appl (ok_in, ok_out, Fork (oka, okc, okd, seqf, seqg)), (Morph (okh_in, okh_out, _) as h) -> 
+    | Appl (ok_in, ok_out, Fork (oka, okc, okd, seqf, seqg)), h
+      (** (f Δ g) . h = (f . h) Δ (g . h) *) -> 
       let Seq (okf_in, okf_out, seqf_list) = seqf in
       let Seq (okg_in, okg_out, seqg_list) = seqg in
+      let okh_in, okh_out = get_oks h in
       let new_seqf = Seq (okh_in, okf_out, seqf_list @ [h]) in
       let new_seqg = Seq (okh_in, okg_out, seqg_list @ [h]) in
       assert (okh_out = oka && okh_out = ok_in && okh_out = okf_in && okh_out = okg_in); 
       Some (Wrap (Appl (okh_in, ok_out, Fork (okh_in, okc, okd, new_seqf, new_seqg)))) 
     | Morph (_, ok_out, Apply _), 
       Appl (ok_in, _, Fork (_, _, _, Seq (_, _, [Appl (_, _, Curry (_, _, _, seqf))]), seqg)) 
-      ->
+      (** apply . (Curry f Δ g) = f . (id Δ g) *) ->
       let Seq (okf_in, okf_out, seqf_list) = seqf in
       let Seq (_, okg_out, _) = seqg in
       let fork_id_g = 
         Appl (ok_in, okf_in, Fork (ok_in, ok_in, okg_out, Seq (ok_in, ok_in, [Morph (ok_in, ok_in, Identity ok_in)]), seqg)) in
       Some (Wrap (Seq (ok_in, ok_out, seqf_list @ [fork_id_g])))
-    | Appl (_, okcurry_out, Curry (_, okb, _, seqf)), (Morph (okg_in, okg_out, _) as g) -> 
+    | Appl (_, okcurry_out, Curry (_, okb, _, seqf)), g 
+      (** (Curry f) . g = Curry (f . (g . Exl Δ Exr)) *) -> 
       let Seq (okf_in, okf_out, seqf_list) = seqf in
+      let okg_in, okg_out = get_oks g in
       let okgExl_in = OkPair (okg_in, okb) in
       let seqgExl = Seq (okgExl_in, okg_out, [g; Morph (okgExl_in, okg_in, Exl (okg_in, okb))]) in
       let seqExr = Seq (okgExl_in, okb, [Morph (okgExl_in, okb, Exr (okg_in, okb))]) in
@@ -194,6 +198,11 @@ let rec apply_rewriting_rules_once (seq_list: intern_node flattened_composition 
       let seqf_fork_gExl_Exr = 
         Seq (okgExl_in, okf_out, seqf_list @ [fork_gExl_Exr]) in
       Some (Wrap (Appl (okg_in, okcurry_out, Curry (okg_in, okb, okf_out, seqf_fork_gExl_Exr))))
+    | f, g when snd (get_oks f) = OkUnit
+      (** f . g = it, as soon as f: A -> unit *) -> 
+      let ok_in = fst (get_oks g) in
+      let it = Morph (ok_in, OkUnit, It ok_in) in 
+      Some (Wrap it)
     | _ -> None
     in
   let seq_list_has_been_modified = ref false in
@@ -206,7 +215,7 @@ let rec apply_rewriting_rules_once (seq_list: intern_node flattened_composition 
     ) seq_list in
   match seq_list' with
   | [] | [_] -> if !seq_list_has_been_modified then Some seq_list' else None
-  | h1 :: (h2 :: t as l) -> 
+  | h1 :: ((h2 :: t) as l) -> 
     let h' = apply_binary_rules_once h1 h2 in ( 
     match h' with
     | None -> let h2t' = apply_rewriting_rules_once l in (

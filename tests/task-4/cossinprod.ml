@@ -12,329 +12,98 @@ end) = struct
   include CartesianCatDerivedOperations (C)
   open C
 let cossinprod = C.(
-compose
-    (ok_pair ok_float ok_float)
-    (ok_pair (ok_pair (ok_pair (ok_pair ok_float ok_float) ok_float) ok_float) ok_float)
-    (ok_pair ok_float ok_float)
-  (fork
-      (ok_pair (ok_pair (ok_pair (ok_pair ok_float ok_float) ok_float) ok_float) ok_float)
-      ok_float
-      ok_float
+fork (ok_pair ok_float ok_float) ok_float ok_float
+  (compose (ok_pair ok_float ok_float) ok_float ok_float cosC
     (compose
+        (ok_pair ok_float ok_float)
         (ok_pair (ok_pair (ok_pair (ok_pair ok_float ok_float) ok_float) ok_float) ok_float)
         ok_float
-        ok_float
-      cosC
-      (exr (ok_pair (ok_pair (ok_pair ok_float ok_float) ok_float) ok_float) ok_float))
-    (compose
-        (ok_pair (ok_pair (ok_pair (ok_pair ok_float ok_float) ok_float) ok_float) ok_float)
-        ok_float
-        ok_float
-      sinC
-      (exr (ok_pair (ok_pair (ok_pair ok_float ok_float) ok_float) ok_float) ok_float)))
-  (compose
-      (ok_pair ok_float ok_float)
-      (ok_pair (ok_pair (ok_pair ok_float ok_float) ok_float) ok_float)
-      (ok_pair (ok_pair (ok_pair (ok_pair ok_float ok_float) ok_float) ok_float) ok_float)
-    (fork
-        (ok_pair (ok_pair (ok_pair ok_float ok_float) ok_float) ok_float)
-        (ok_pair (ok_pair (ok_pair ok_float ok_float) ok_float) ok_float)
-        ok_float
-      (id (ok_pair (ok_pair (ok_pair ok_float ok_float) ok_float) ok_float))
+      (exr (ok_pair (ok_pair (ok_pair ok_float ok_float) ok_float) ok_float) ok_float)
       (compose
+          (ok_pair ok_float ok_float)
           (ok_pair (ok_pair (ok_pair ok_float ok_float) ok_float) ok_float)
-          (ok_pair (ok_arrow ok_float ok_float) ok_float)
-          ok_float
-        (apply ok_float ok_float)
+          (ok_pair (ok_pair (ok_pair (ok_pair ok_float ok_float) ok_float) ok_float) ok_float)
         (fork
             (ok_pair (ok_pair (ok_pair ok_float ok_float) ok_float) ok_float)
-            (ok_arrow ok_float ok_float)
+            (ok_pair (ok_pair (ok_pair ok_float ok_float) ok_float) ok_float)
             ok_float
+          (id (ok_pair (ok_pair (ok_pair ok_float ok_float) ok_float) ok_float))
           (compose
               (ok_pair (ok_pair (ok_pair ok_float ok_float) ok_float) ok_float)
-              (ok_pair (ok_pair (ok_pair (ok_pair ok_float ok_float) ok_float) ok_float) ok_float)
-              (ok_arrow ok_float ok_float)
-            (curry
-                (ok_pair (ok_pair (ok_pair (ok_pair ok_float ok_float) ok_float) ok_float) ok_float)
-                ok_float
-                ok_float
+              (ok_pair ok_float ok_float)
+              ok_float
+            mulC
+            (fork (ok_pair (ok_pair (ok_pair ok_float ok_float) ok_float) ok_float) ok_float ok_float
               (compose
-                  (ok_pair
+                  (ok_pair (ok_pair (ok_pair ok_float ok_float) ok_float) ok_float)
                   (ok_pair (ok_pair (ok_pair (ok_pair ok_float ok_float) ok_float) ok_float) ok_float)
-                  ok_float)
-                  (ok_pair ok_float ok_float)
                   ok_float
-                mulC
-                (fork
+                (exr (ok_pair (ok_pair (ok_pair ok_float ok_float) ok_float) ok_float) ok_float)
+                (compose
+                    (ok_pair (ok_pair (ok_pair ok_float ok_float) ok_float) ok_float)
                     (ok_pair
                     (ok_pair (ok_pair (ok_pair (ok_pair ok_float ok_float) ok_float) ok_float) ok_float)
                     ok_float)
-                    ok_float
-                    ok_float
+                    (ok_pair (ok_pair (ok_pair (ok_pair ok_float ok_float) ok_float) ok_float) ok_float)
+                  (exl
+                      (ok_pair (ok_pair (ok_pair (ok_pair ok_float ok_float) ok_float) ok_float) ok_float)
+                      ok_float)
                   (compose
+                      (ok_pair (ok_pair (ok_pair ok_float ok_float) ok_float) ok_float)
+                      (ok_pair (ok_pair (ok_pair (ok_pair ok_float ok_float) ok_float) ok_float) ok_float)
                       (ok_pair
                       (ok_pair (ok_pair (ok_pair (ok_pair ok_float ok_float) ok_float) ok_float) ok_float)
                       ok_float)
-                      (ok_pair (ok_pair (ok_pair (ok_pair ok_float ok_float) ok_float) ok_float) ok_float)
-                      ok_float
-                    (exr (ok_pair (ok_pair (ok_pair ok_float ok_float) ok_float) ok_float) ok_float)
-                    (exl
+                    (fork
                         (ok_pair (ok_pair (ok_pair (ok_pair ok_float ok_float) ok_float) ok_float) ok_float)
-                        ok_float))
-                  (exr
-                      (ok_pair (ok_pair (ok_pair (ok_pair ok_float ok_float) ok_float) ok_float) ok_float)
-                      ok_float))))
-            (fork
-                (ok_pair (ok_pair (ok_pair ok_float ok_float) ok_float) ok_float)
-                (ok_pair (ok_pair (ok_pair ok_float ok_float) ok_float) ok_float)
-                ok_float
-              (id (ok_pair (ok_pair (ok_pair ok_float ok_float) ok_float) ok_float))
+                        (ok_pair (ok_pair (ok_pair (ok_pair ok_float ok_float) ok_float) ok_float) ok_float)
+                        ok_float
+                      (compose
+                          (ok_pair (ok_pair (ok_pair (ok_pair ok_float ok_float) ok_float) ok_float) ok_float)
+                          (ok_pair (ok_pair (ok_pair ok_float ok_float) ok_float) ok_float)
+                          (ok_pair (ok_pair (ok_pair (ok_pair ok_float ok_float) ok_float) ok_float) ok_float)
+                        (fork
+                            (ok_pair (ok_pair (ok_pair ok_float ok_float) ok_float) ok_float)
+                            (ok_pair (ok_pair (ok_pair ok_float ok_float) ok_float) ok_float)
+                            ok_float
+                          (id (ok_pair (ok_pair (ok_pair ok_float ok_float) ok_float) ok_float))
+                          (compose
+                              (ok_pair (ok_pair (ok_pair ok_float ok_float) ok_float) ok_float)
+                              (ok_pair (ok_pair ok_float ok_float) ok_float)
+                              ok_float
+                            (exr (ok_pair ok_float ok_float) ok_float)
+                            (exl (ok_pair (ok_pair ok_float ok_float) ok_float) ok_float)))
+                        (exl (ok_pair (ok_pair (ok_pair ok_float ok_float) ok_float) ok_float) ok_float))
+                      (exr (ok_pair (ok_pair (ok_pair ok_float ok_float) ok_float) ok_float) ok_float))
+                    (fork
+                        (ok_pair (ok_pair (ok_pair ok_float ok_float) ok_float) ok_float)
+                        (ok_pair (ok_pair (ok_pair ok_float ok_float) ok_float) ok_float)
+                        ok_float
+                      (id (ok_pair (ok_pair (ok_pair ok_float ok_float) ok_float) ok_float))
+                      (exr (ok_pair (ok_pair ok_float ok_float) ok_float) ok_float)))))
               (compose
                   (ok_pair (ok_pair (ok_pair ok_float ok_float) ok_float) ok_float)
-                  (ok_pair (ok_pair ok_float ok_float) ok_float)
-                  ok_float
-                (exr (ok_pair ok_float ok_float) ok_float)
-                (exl (ok_pair (ok_pair ok_float ok_float) ok_float) ok_float))))
-          (exr (ok_pair (ok_pair ok_float ok_float) ok_float) ok_float))))
-    (compose
-        (ok_pair ok_float ok_float)
-        (ok_pair (ok_pair ok_float ok_float) ok_float)
-        (ok_pair (ok_pair (ok_pair ok_float ok_float) ok_float) ok_float)
-      (fork
-          (ok_pair (ok_pair ok_float ok_float) ok_float)
-          (ok_pair (ok_pair ok_float ok_float) ok_float)
-          ok_float
-        (id (ok_pair (ok_pair ok_float ok_float) ok_float))
-        (compose (ok_pair (ok_pair ok_float ok_float) ok_float) (ok_pair ok_float ok_float) ok_float
-          (exr ok_float ok_float)
-          (exl (ok_pair ok_float ok_float) ok_float)))
-      (fork (ok_pair ok_float ok_float) (ok_pair ok_float ok_float) ok_float
-        (id (ok_pair ok_float ok_float))
-        (exl ok_float ok_float))))
-)
-let sum = C.(
-compose (ok_pair ok_float ok_float) (ok_pair (ok_arrow ok_float ok_float) ok_float) ok_float
-  (apply ok_float ok_float)
-  (compose
-      (ok_pair ok_float ok_float)
-      (ok_pair
-      (ok_pair (ok_pair (ok_pair ok_float ok_float) (ok_pair ok_float ok_float)) ok_float)
-      ok_float)
-      (ok_pair (ok_arrow ok_float ok_float) ok_float)
-    (fork
-        (ok_pair
-        (ok_pair (ok_pair (ok_pair ok_float ok_float) (ok_pair ok_float ok_float)) ok_float)
-        ok_float)
-        (ok_arrow ok_float ok_float)
-        ok_float
-      (compose
-          (ok_pair
-          (ok_pair (ok_pair (ok_pair ok_float ok_float) (ok_pair ok_float ok_float)) ok_float)
-          ok_float)
-          (ok_pair
-          (ok_pair
-          (ok_pair (ok_pair (ok_pair ok_float ok_float) (ok_pair ok_float ok_float)) ok_float)
-          ok_float)
-          ok_float)
-          (ok_arrow ok_float ok_float)
-        (curry
-            (ok_pair
-            (ok_pair
-            (ok_pair (ok_pair (ok_pair ok_float ok_float) (ok_pair ok_float ok_float)) ok_float)
-            ok_float)
-            ok_float)
-            ok_float
-            ok_float
-          (compose
-              (ok_pair
-              (ok_pair
-              (ok_pair
-              (ok_pair (ok_pair (ok_pair ok_float ok_float) (ok_pair ok_float ok_float)) ok_float)
-              ok_float)
-              ok_float)
-              ok_float)
-              (ok_pair ok_float ok_float)
-              ok_float
-            addC
-            (fork
-                (ok_pair
-                (ok_pair
-                (ok_pair
-                (ok_pair (ok_pair (ok_pair ok_float ok_float) (ok_pair ok_float ok_float)) ok_float)
-                ok_float)
-                ok_float)
-                ok_float)
-                ok_float
-                ok_float
-              (compose
                   (ok_pair
-                  (ok_pair
-                  (ok_pair
-                  (ok_pair (ok_pair (ok_pair ok_float ok_float) (ok_pair ok_float ok_float)) ok_float)
-                  ok_float)
-                  ok_float)
-                  ok_float)
-                  (ok_pair
-                  (ok_pair
-                  (ok_pair (ok_pair (ok_pair ok_float ok_float) (ok_pair ok_float ok_float)) ok_float)
-                  ok_float)
+                  (ok_pair (ok_pair (ok_pair (ok_pair ok_float ok_float) ok_float) ok_float) ok_float)
                   ok_float)
                   ok_float
                 (exr
-                    (ok_pair
-                    (ok_pair (ok_pair (ok_pair ok_float ok_float) (ok_pair ok_float ok_float)) ok_float)
+                    (ok_pair (ok_pair (ok_pair (ok_pair ok_float ok_float) ok_float) ok_float) ok_float)
                     ok_float)
-                    ok_float)
-                (exl
-                    (ok_pair
-                    (ok_pair
-                    (ok_pair (ok_pair (ok_pair ok_float ok_float) (ok_pair ok_float ok_float)) ok_float)
-                    ok_float)
-                    ok_float)
-                    ok_float))
-              (exr
-                  (ok_pair
-                  (ok_pair
-                  (ok_pair (ok_pair (ok_pair ok_float ok_float) (ok_pair ok_float ok_float)) ok_float)
-                  ok_float)
-                  ok_float)
-                  ok_float))))
-        (fork
-            (ok_pair
-            (ok_pair (ok_pair (ok_pair ok_float ok_float) (ok_pair ok_float ok_float)) ok_float)
-            ok_float)
-            (ok_pair
-            (ok_pair (ok_pair (ok_pair ok_float ok_float) (ok_pair ok_float ok_float)) ok_float)
-            ok_float)
-            ok_float
-          (id
-              (ok_pair
-              (ok_pair (ok_pair (ok_pair ok_float ok_float) (ok_pair ok_float ok_float)) ok_float)
-              ok_float))
-          (compose
-              (ok_pair
-              (ok_pair (ok_pair (ok_pair ok_float ok_float) (ok_pair ok_float ok_float)) ok_float)
-              ok_float)
-              (ok_pair (ok_pair (ok_pair ok_float ok_float) (ok_pair ok_float ok_float)) ok_float)
-              ok_float
-            (exr (ok_pair (ok_pair ok_float ok_float) (ok_pair ok_float ok_float)) ok_float)
-            (exl
-                (ok_pair (ok_pair (ok_pair ok_float ok_float) (ok_pair ok_float ok_float)) ok_float)
-                ok_float))))
-      (exr
-          (ok_pair (ok_pair (ok_pair ok_float ok_float) (ok_pair ok_float ok_float)) ok_float)
-          ok_float))
-    (compose
-        (ok_pair ok_float ok_float)
-        (ok_pair (ok_pair (ok_pair ok_float ok_float) (ok_pair ok_float ok_float)) ok_float)
-        (ok_pair
-        (ok_pair (ok_pair (ok_pair ok_float ok_float) (ok_pair ok_float ok_float)) ok_float)
-        ok_float)
-      (fork
-          (ok_pair (ok_pair (ok_pair ok_float ok_float) (ok_pair ok_float ok_float)) ok_float)
-          (ok_pair (ok_pair (ok_pair ok_float ok_float) (ok_pair ok_float ok_float)) ok_float)
-          ok_float
-        (id (ok_pair (ok_pair (ok_pair ok_float ok_float) (ok_pair ok_float ok_float)) ok_float))
-        (compose
-            (ok_pair (ok_pair (ok_pair ok_float ok_float) (ok_pair ok_float ok_float)) ok_float)
-            (ok_pair ok_float ok_float)
-            ok_float
-          (exr ok_float ok_float)
-          (compose
-              (ok_pair (ok_pair (ok_pair ok_float ok_float) (ok_pair ok_float ok_float)) ok_float)
-              (ok_pair (ok_pair ok_float ok_float) (ok_pair ok_float ok_float))
-              (ok_pair ok_float ok_float)
-            (exr (ok_pair ok_float ok_float) (ok_pair ok_float ok_float))
-            (exl (ok_pair (ok_pair ok_float ok_float) (ok_pair ok_float ok_float)) ok_float))))
-      (compose
-          (ok_pair ok_float ok_float)
-          (ok_pair (ok_pair ok_float ok_float) (ok_pair ok_float ok_float))
-          (ok_pair (ok_pair (ok_pair ok_float ok_float) (ok_pair ok_float ok_float)) ok_float)
-        (fork
-            (ok_pair (ok_pair ok_float ok_float) (ok_pair ok_float ok_float))
-            (ok_pair (ok_pair ok_float ok_float) (ok_pair ok_float ok_float))
-            ok_float
-          (id (ok_pair (ok_pair ok_float ok_float) (ok_pair ok_float ok_float)))
-          (compose
-              (ok_pair (ok_pair ok_float ok_float) (ok_pair ok_float ok_float))
-              (ok_pair ok_float ok_float)
-              ok_float
-            (exl ok_float ok_float)
-            (exr (ok_pair ok_float ok_float) (ok_pair ok_float ok_float))))
-        (fork (ok_pair ok_float ok_float) (ok_pair ok_float ok_float) (ok_pair ok_float ok_float)
-          (id (ok_pair ok_float ok_float))
-          (compose
-              (ok_pair ok_float ok_float)
-              (ok_pair (ok_pair (ok_pair (ok_pair ok_float ok_float) ok_float) ok_float) ok_float)
-              (ok_pair ok_float ok_float)
-            (fork
-                (ok_pair (ok_pair (ok_pair (ok_pair ok_float ok_float) ok_float) ok_float) ok_float)
-                ok_float
-                ok_float
-              (compose
-                  (ok_pair (ok_pair (ok_pair (ok_pair ok_float ok_float) ok_float) ok_float) ok_float)
-                  ok_float
-                  ok_float
-                cosC
-                (exr (ok_pair (ok_pair (ok_pair ok_float ok_float) ok_float) ok_float) ok_float))
-              (compose
-                  (ok_pair (ok_pair (ok_pair (ok_pair ok_float ok_float) ok_float) ok_float) ok_float)
-                  ok_float
-                  ok_float
-                sinC
-                (exr (ok_pair (ok_pair (ok_pair ok_float ok_float) ok_float) ok_float) ok_float)))
-            (compose
-                (ok_pair ok_float ok_float)
-                (ok_pair (ok_pair (ok_pair ok_float ok_float) ok_float) ok_float)
-                (ok_pair (ok_pair (ok_pair (ok_pair ok_float ok_float) ok_float) ok_float) ok_float)
-              (fork
-                  (ok_pair (ok_pair (ok_pair ok_float ok_float) ok_float) ok_float)
-                  (ok_pair (ok_pair (ok_pair ok_float ok_float) ok_float) ok_float)
-                  ok_float
-                (id (ok_pair (ok_pair (ok_pair ok_float ok_float) ok_float) ok_float))
                 (compose
                     (ok_pair (ok_pair (ok_pair ok_float ok_float) ok_float) ok_float)
-                    (ok_pair (ok_arrow ok_float ok_float) ok_float)
-                    ok_float
-                  (apply ok_float ok_float)
+                    (ok_pair (ok_pair (ok_pair (ok_pair ok_float ok_float) ok_float) ok_float) ok_float)
+                    (ok_pair
+                    (ok_pair (ok_pair (ok_pair (ok_pair ok_float ok_float) ok_float) ok_float) ok_float)
+                    ok_float)
                   (fork
-                      (ok_pair (ok_pair (ok_pair ok_float ok_float) ok_float) ok_float)
-                      (ok_arrow ok_float ok_float)
+                      (ok_pair (ok_pair (ok_pair (ok_pair ok_float ok_float) ok_float) ok_float) ok_float)
+                      (ok_pair (ok_pair (ok_pair (ok_pair ok_float ok_float) ok_float) ok_float) ok_float)
                       ok_float
                     (compose
+                        (ok_pair (ok_pair (ok_pair (ok_pair ok_float ok_float) ok_float) ok_float) ok_float)
                         (ok_pair (ok_pair (ok_pair ok_float ok_float) ok_float) ok_float)
                         (ok_pair (ok_pair (ok_pair (ok_pair ok_float ok_float) ok_float) ok_float) ok_float)
-                        (ok_arrow ok_float ok_float)
-                      (curry
-                          (ok_pair (ok_pair (ok_pair (ok_pair ok_float ok_float) ok_float) ok_float) ok_float)
-                          ok_float
-                          ok_float
-                        (compose
-                            (ok_pair
-                            (ok_pair (ok_pair (ok_pair (ok_pair ok_float ok_float) ok_float) ok_float) ok_float)
-                            ok_float)
-                            (ok_pair ok_float ok_float)
-                            ok_float
-                          mulC
-                          (fork
-                              (ok_pair
-                              (ok_pair (ok_pair (ok_pair (ok_pair ok_float ok_float) ok_float) ok_float) ok_float)
-                              ok_float)
-                              ok_float
-                              ok_float
-                            (compose
-                                (ok_pair
-                                (ok_pair (ok_pair (ok_pair (ok_pair ok_float ok_float) ok_float) ok_float) ok_float)
-                                ok_float)
-                                (ok_pair (ok_pair (ok_pair (ok_pair ok_float ok_float) ok_float) ok_float) ok_float)
-                                ok_float
-                              (exr (ok_pair (ok_pair (ok_pair ok_float ok_float) ok_float) ok_float) ok_float)
-                              (exl
-                                  (ok_pair (ok_pair (ok_pair (ok_pair ok_float ok_float) ok_float) ok_float) ok_float)
-                                  ok_float))
-                            (exr
-                                (ok_pair (ok_pair (ok_pair (ok_pair ok_float ok_float) ok_float) ok_float) ok_float)
-                                ok_float))))
                       (fork
                           (ok_pair (ok_pair (ok_pair ok_float ok_float) ok_float) ok_float)
                           (ok_pair (ok_pair (ok_pair ok_float ok_float) ok_float) ok_float)
@@ -345,42 +114,1155 @@ compose (ok_pair ok_float ok_float) (ok_pair (ok_arrow ok_float ok_float) ok_flo
                             (ok_pair (ok_pair ok_float ok_float) ok_float)
                             ok_float
                           (exr (ok_pair ok_float ok_float) ok_float)
-                          (exl (ok_pair (ok_pair ok_float ok_float) ok_float) ok_float))))
-                    (exr (ok_pair (ok_pair ok_float ok_float) ok_float) ok_float))))
+                          (exl (ok_pair (ok_pair ok_float ok_float) ok_float) ok_float)))
+                      (exl (ok_pair (ok_pair (ok_pair ok_float ok_float) ok_float) ok_float) ok_float))
+                    (exr (ok_pair (ok_pair (ok_pair ok_float ok_float) ok_float) ok_float) ok_float))
+                  (fork
+                      (ok_pair (ok_pair (ok_pair ok_float ok_float) ok_float) ok_float)
+                      (ok_pair (ok_pair (ok_pair ok_float ok_float) ok_float) ok_float)
+                      ok_float
+                    (id (ok_pair (ok_pair (ok_pair ok_float ok_float) ok_float) ok_float))
+                    (exr (ok_pair (ok_pair ok_float ok_float) ok_float) ok_float)))))))
+        (compose
+            (ok_pair ok_float ok_float)
+            (ok_pair (ok_pair ok_float ok_float) ok_float)
+            (ok_pair (ok_pair (ok_pair ok_float ok_float) ok_float) ok_float)
+          (fork
+              (ok_pair (ok_pair ok_float ok_float) ok_float)
+              (ok_pair (ok_pair ok_float ok_float) ok_float)
+              ok_float
+            (id (ok_pair (ok_pair ok_float ok_float) ok_float))
+            (compose (ok_pair (ok_pair ok_float ok_float) ok_float) (ok_pair ok_float ok_float) ok_float
+              (exr ok_float ok_float)
+              (exl (ok_pair ok_float ok_float) ok_float)))
+          (fork (ok_pair ok_float ok_float) (ok_pair ok_float ok_float) ok_float
+            (id (ok_pair ok_float ok_float))
+            (exl ok_float ok_float))))))
+  (compose (ok_pair ok_float ok_float) ok_float ok_float sinC
+    (compose
+        (ok_pair ok_float ok_float)
+        (ok_pair (ok_pair (ok_pair (ok_pair ok_float ok_float) ok_float) ok_float) ok_float)
+        ok_float
+      (exr (ok_pair (ok_pair (ok_pair ok_float ok_float) ok_float) ok_float) ok_float)
+      (compose
+          (ok_pair ok_float ok_float)
+          (ok_pair (ok_pair (ok_pair ok_float ok_float) ok_float) ok_float)
+          (ok_pair (ok_pair (ok_pair (ok_pair ok_float ok_float) ok_float) ok_float) ok_float)
+        (fork
+            (ok_pair (ok_pair (ok_pair ok_float ok_float) ok_float) ok_float)
+            (ok_pair (ok_pair (ok_pair ok_float ok_float) ok_float) ok_float)
+            ok_float
+          (id (ok_pair (ok_pair (ok_pair ok_float ok_float) ok_float) ok_float))
+          (compose
+              (ok_pair (ok_pair (ok_pair ok_float ok_float) ok_float) ok_float)
+              (ok_pair ok_float ok_float)
+              ok_float
+            mulC
+            (fork (ok_pair (ok_pair (ok_pair ok_float ok_float) ok_float) ok_float) ok_float ok_float
+              (compose
+                  (ok_pair (ok_pair (ok_pair ok_float ok_float) ok_float) ok_float)
+                  (ok_pair (ok_pair (ok_pair (ok_pair ok_float ok_float) ok_float) ok_float) ok_float)
+                  ok_float
+                (exr (ok_pair (ok_pair (ok_pair ok_float ok_float) ok_float) ok_float) ok_float)
+                (compose
+                    (ok_pair (ok_pair (ok_pair ok_float ok_float) ok_float) ok_float)
+                    (ok_pair
+                    (ok_pair (ok_pair (ok_pair (ok_pair ok_float ok_float) ok_float) ok_float) ok_float)
+                    ok_float)
+                    (ok_pair (ok_pair (ok_pair (ok_pair ok_float ok_float) ok_float) ok_float) ok_float)
+                  (exl
+                      (ok_pair (ok_pair (ok_pair (ok_pair ok_float ok_float) ok_float) ok_float) ok_float)
+                      ok_float)
+                  (compose
+                      (ok_pair (ok_pair (ok_pair ok_float ok_float) ok_float) ok_float)
+                      (ok_pair (ok_pair (ok_pair (ok_pair ok_float ok_float) ok_float) ok_float) ok_float)
+                      (ok_pair
+                      (ok_pair (ok_pair (ok_pair (ok_pair ok_float ok_float) ok_float) ok_float) ok_float)
+                      ok_float)
+                    (fork
+                        (ok_pair (ok_pair (ok_pair (ok_pair ok_float ok_float) ok_float) ok_float) ok_float)
+                        (ok_pair (ok_pair (ok_pair (ok_pair ok_float ok_float) ok_float) ok_float) ok_float)
+                        ok_float
+                      (compose
+                          (ok_pair (ok_pair (ok_pair (ok_pair ok_float ok_float) ok_float) ok_float) ok_float)
+                          (ok_pair (ok_pair (ok_pair ok_float ok_float) ok_float) ok_float)
+                          (ok_pair (ok_pair (ok_pair (ok_pair ok_float ok_float) ok_float) ok_float) ok_float)
+                        (fork
+                            (ok_pair (ok_pair (ok_pair ok_float ok_float) ok_float) ok_float)
+                            (ok_pair (ok_pair (ok_pair ok_float ok_float) ok_float) ok_float)
+                            ok_float
+                          (id (ok_pair (ok_pair (ok_pair ok_float ok_float) ok_float) ok_float))
+                          (compose
+                              (ok_pair (ok_pair (ok_pair ok_float ok_float) ok_float) ok_float)
+                              (ok_pair (ok_pair ok_float ok_float) ok_float)
+                              ok_float
+                            (exr (ok_pair ok_float ok_float) ok_float)
+                            (exl (ok_pair (ok_pair ok_float ok_float) ok_float) ok_float)))
+                        (exl (ok_pair (ok_pair (ok_pair ok_float ok_float) ok_float) ok_float) ok_float))
+                      (exr (ok_pair (ok_pair (ok_pair ok_float ok_float) ok_float) ok_float) ok_float))
+                    (fork
+                        (ok_pair (ok_pair (ok_pair ok_float ok_float) ok_float) ok_float)
+                        (ok_pair (ok_pair (ok_pair ok_float ok_float) ok_float) ok_float)
+                        ok_float
+                      (id (ok_pair (ok_pair (ok_pair ok_float ok_float) ok_float) ok_float))
+                      (exr (ok_pair (ok_pair ok_float ok_float) ok_float) ok_float)))))
+              (compose
+                  (ok_pair (ok_pair (ok_pair ok_float ok_float) ok_float) ok_float)
+                  (ok_pair
+                  (ok_pair (ok_pair (ok_pair (ok_pair ok_float ok_float) ok_float) ok_float) ok_float)
+                  ok_float)
+                  ok_float
+                (exr
+                    (ok_pair (ok_pair (ok_pair (ok_pair ok_float ok_float) ok_float) ok_float) ok_float)
+                    ok_float)
+                (compose
+                    (ok_pair (ok_pair (ok_pair ok_float ok_float) ok_float) ok_float)
+                    (ok_pair (ok_pair (ok_pair (ok_pair ok_float ok_float) ok_float) ok_float) ok_float)
+                    (ok_pair
+                    (ok_pair (ok_pair (ok_pair (ok_pair ok_float ok_float) ok_float) ok_float) ok_float)
+                    ok_float)
+                  (fork
+                      (ok_pair (ok_pair (ok_pair (ok_pair ok_float ok_float) ok_float) ok_float) ok_float)
+                      (ok_pair (ok_pair (ok_pair (ok_pair ok_float ok_float) ok_float) ok_float) ok_float)
+                      ok_float
+                    (compose
+                        (ok_pair (ok_pair (ok_pair (ok_pair ok_float ok_float) ok_float) ok_float) ok_float)
+                        (ok_pair (ok_pair (ok_pair ok_float ok_float) ok_float) ok_float)
+                        (ok_pair (ok_pair (ok_pair (ok_pair ok_float ok_float) ok_float) ok_float) ok_float)
+                      (fork
+                          (ok_pair (ok_pair (ok_pair ok_float ok_float) ok_float) ok_float)
+                          (ok_pair (ok_pair (ok_pair ok_float ok_float) ok_float) ok_float)
+                          ok_float
+                        (id (ok_pair (ok_pair (ok_pair ok_float ok_float) ok_float) ok_float))
+                        (compose
+                            (ok_pair (ok_pair (ok_pair ok_float ok_float) ok_float) ok_float)
+                            (ok_pair (ok_pair ok_float ok_float) ok_float)
+                            ok_float
+                          (exr (ok_pair ok_float ok_float) ok_float)
+                          (exl (ok_pair (ok_pair ok_float ok_float) ok_float) ok_float)))
+                      (exl (ok_pair (ok_pair (ok_pair ok_float ok_float) ok_float) ok_float) ok_float))
+                    (exr (ok_pair (ok_pair (ok_pair ok_float ok_float) ok_float) ok_float) ok_float))
+                  (fork
+                      (ok_pair (ok_pair (ok_pair ok_float ok_float) ok_float) ok_float)
+                      (ok_pair (ok_pair (ok_pair ok_float ok_float) ok_float) ok_float)
+                      ok_float
+                    (id (ok_pair (ok_pair (ok_pair ok_float ok_float) ok_float) ok_float))
+                    (exr (ok_pair (ok_pair ok_float ok_float) ok_float) ok_float)))))))
+        (compose
+            (ok_pair ok_float ok_float)
+            (ok_pair (ok_pair ok_float ok_float) ok_float)
+            (ok_pair (ok_pair (ok_pair ok_float ok_float) ok_float) ok_float)
+          (fork
+              (ok_pair (ok_pair ok_float ok_float) ok_float)
+              (ok_pair (ok_pair ok_float ok_float) ok_float)
+              ok_float
+            (id (ok_pair (ok_pair ok_float ok_float) ok_float))
+            (compose (ok_pair (ok_pair ok_float ok_float) ok_float) (ok_pair ok_float ok_float) ok_float
+              (exr ok_float ok_float)
+              (exl (ok_pair ok_float ok_float) ok_float)))
+          (fork (ok_pair ok_float ok_float) (ok_pair ok_float ok_float) ok_float
+            (id (ok_pair ok_float ok_float))
+            (exl ok_float ok_float))))))
+)
+let sum = C.(
+compose (ok_pair ok_float ok_float) (ok_pair ok_float ok_float) ok_float addC
+  (fork (ok_pair ok_float ok_float) ok_float ok_float
+    (compose
+        (ok_pair ok_float ok_float)
+        (ok_pair
+        (ok_pair
+        (ok_pair (ok_pair (ok_pair ok_float ok_float) (ok_pair ok_float ok_float)) ok_float)
+        ok_float)
+        ok_float)
+        ok_float
+      (exr
+          (ok_pair
+          (ok_pair (ok_pair (ok_pair ok_float ok_float) (ok_pair ok_float ok_float)) ok_float)
+          ok_float)
+          ok_float)
+      (compose
+          (ok_pair ok_float ok_float)
+          (ok_pair
+          (ok_pair
+          (ok_pair
+          (ok_pair (ok_pair (ok_pair ok_float ok_float) (ok_pair ok_float ok_float)) ok_float)
+          ok_float)
+          ok_float)
+          ok_float)
+          (ok_pair
+          (ok_pair
+          (ok_pair (ok_pair (ok_pair ok_float ok_float) (ok_pair ok_float ok_float)) ok_float)
+          ok_float)
+          ok_float)
+        (exl
+            (ok_pair
+            (ok_pair
+            (ok_pair (ok_pair (ok_pair ok_float ok_float) (ok_pair ok_float ok_float)) ok_float)
+            ok_float)
+            ok_float)
+            ok_float)
+        (compose
+            (ok_pair ok_float ok_float)
+            (ok_pair
+            (ok_pair
+            (ok_pair (ok_pair (ok_pair ok_float ok_float) (ok_pair ok_float ok_float)) ok_float)
+            ok_float)
+            ok_float)
+            (ok_pair
+            (ok_pair
+            (ok_pair
+            (ok_pair (ok_pair (ok_pair ok_float ok_float) (ok_pair ok_float ok_float)) ok_float)
+            ok_float)
+            ok_float)
+            ok_float)
+          (fork
+              (ok_pair
+              (ok_pair
+              (ok_pair (ok_pair (ok_pair ok_float ok_float) (ok_pair ok_float ok_float)) ok_float)
+              ok_float)
+              ok_float)
+              (ok_pair
+              (ok_pair
+              (ok_pair (ok_pair (ok_pair ok_float ok_float) (ok_pair ok_float ok_float)) ok_float)
+              ok_float)
+              ok_float)
+              ok_float
+            (compose
+                (ok_pair
+                (ok_pair
+                (ok_pair (ok_pair (ok_pair ok_float ok_float) (ok_pair ok_float ok_float)) ok_float)
+                ok_float)
+                ok_float)
+                (ok_pair
+                (ok_pair (ok_pair (ok_pair ok_float ok_float) (ok_pair ok_float ok_float)) ok_float)
+                ok_float)
+                (ok_pair
+                (ok_pair
+                (ok_pair (ok_pair (ok_pair ok_float ok_float) (ok_pair ok_float ok_float)) ok_float)
+                ok_float)
+                ok_float)
+              (fork
+                  (ok_pair
+                  (ok_pair (ok_pair (ok_pair ok_float ok_float) (ok_pair ok_float ok_float)) ok_float)
+                  ok_float)
+                  (ok_pair
+                  (ok_pair (ok_pair (ok_pair ok_float ok_float) (ok_pair ok_float ok_float)) ok_float)
+                  ok_float)
+                  ok_float
+                (id
+                    (ok_pair
+                    (ok_pair (ok_pair (ok_pair ok_float ok_float) (ok_pair ok_float ok_float)) ok_float)
+                    ok_float))
+                (compose
+                    (ok_pair
+                    (ok_pair (ok_pair (ok_pair ok_float ok_float) (ok_pair ok_float ok_float)) ok_float)
+                    ok_float)
+                    (ok_pair (ok_pair (ok_pair ok_float ok_float) (ok_pair ok_float ok_float)) ok_float)
+                    ok_float
+                  (exr (ok_pair (ok_pair ok_float ok_float) (ok_pair ok_float ok_float)) ok_float)
+                  (exl
+                      (ok_pair (ok_pair (ok_pair ok_float ok_float) (ok_pair ok_float ok_float)) ok_float)
+                      ok_float)))
+              (exl
+                  (ok_pair
+                  (ok_pair (ok_pair (ok_pair ok_float ok_float) (ok_pair ok_float ok_float)) ok_float)
+                  ok_float)
+                  ok_float))
+            (exr
+                (ok_pair
+                (ok_pair (ok_pair (ok_pair ok_float ok_float) (ok_pair ok_float ok_float)) ok_float)
+                ok_float)
+                ok_float))
+          (compose
+              (ok_pair ok_float ok_float)
+              (ok_pair
+              (ok_pair (ok_pair (ok_pair ok_float ok_float) (ok_pair ok_float ok_float)) ok_float)
+              ok_float)
+              (ok_pair
+              (ok_pair
+              (ok_pair (ok_pair (ok_pair ok_float ok_float) (ok_pair ok_float ok_float)) ok_float)
+              ok_float)
+              ok_float)
+            (fork
+                (ok_pair
+                (ok_pair (ok_pair (ok_pair ok_float ok_float) (ok_pair ok_float ok_float)) ok_float)
+                ok_float)
+                (ok_pair
+                (ok_pair (ok_pair (ok_pair ok_float ok_float) (ok_pair ok_float ok_float)) ok_float)
+                ok_float)
+                ok_float
+              (id
+                  (ok_pair
+                  (ok_pair (ok_pair (ok_pair ok_float ok_float) (ok_pair ok_float ok_float)) ok_float)
+                  ok_float))
+              (exr
+                  (ok_pair (ok_pair (ok_pair ok_float ok_float) (ok_pair ok_float ok_float)) ok_float)
+                  ok_float))
+            (compose
+                (ok_pair ok_float ok_float)
+                (ok_pair (ok_pair (ok_pair ok_float ok_float) (ok_pair ok_float ok_float)) ok_float)
+                (ok_pair
+                (ok_pair (ok_pair (ok_pair ok_float ok_float) (ok_pair ok_float ok_float)) ok_float)
+                ok_float)
+              (fork
+                  (ok_pair (ok_pair (ok_pair ok_float ok_float) (ok_pair ok_float ok_float)) ok_float)
+                  (ok_pair (ok_pair (ok_pair ok_float ok_float) (ok_pair ok_float ok_float)) ok_float)
+                  ok_float
+                (id (ok_pair (ok_pair (ok_pair ok_float ok_float) (ok_pair ok_float ok_float)) ok_float))
+                (compose
+                    (ok_pair (ok_pair (ok_pair ok_float ok_float) (ok_pair ok_float ok_float)) ok_float)
+                    (ok_pair ok_float ok_float)
+                    ok_float
+                  (exr ok_float ok_float)
+                  (compose
+                      (ok_pair (ok_pair (ok_pair ok_float ok_float) (ok_pair ok_float ok_float)) ok_float)
+                      (ok_pair (ok_pair ok_float ok_float) (ok_pair ok_float ok_float))
+                      (ok_pair ok_float ok_float)
+                    (exr (ok_pair ok_float ok_float) (ok_pair ok_float ok_float))
+                    (exl (ok_pair (ok_pair ok_float ok_float) (ok_pair ok_float ok_float)) ok_float))))
               (compose
                   (ok_pair ok_float ok_float)
-                  (ok_pair (ok_pair ok_float ok_float) ok_float)
-                  (ok_pair (ok_pair (ok_pair ok_float ok_float) ok_float) ok_float)
+                  (ok_pair (ok_pair ok_float ok_float) (ok_pair ok_float ok_float))
+                  (ok_pair (ok_pair (ok_pair ok_float ok_float) (ok_pair ok_float ok_float)) ok_float)
                 (fork
-                    (ok_pair (ok_pair ok_float ok_float) ok_float)
-                    (ok_pair (ok_pair ok_float ok_float) ok_float)
-                    ok_float
-                  (id (ok_pair (ok_pair ok_float ok_float) ok_float))
-                  (compose (ok_pair (ok_pair ok_float ok_float) ok_float) (ok_pair ok_float ok_float) ok_float
-                    (exr ok_float ok_float)
-                    (exl (ok_pair ok_float ok_float) ok_float)))
-                (compose
-                    (ok_pair ok_float ok_float)
                     (ok_pair (ok_pair ok_float ok_float) (ok_pair ok_float ok_float))
-                    (ok_pair (ok_pair ok_float ok_float) ok_float)
-                  (fork
+                    (ok_pair (ok_pair ok_float ok_float) (ok_pair ok_float ok_float))
+                    ok_float
+                  (id (ok_pair (ok_pair ok_float ok_float) (ok_pair ok_float ok_float)))
+                  (compose
                       (ok_pair (ok_pair ok_float ok_float) (ok_pair ok_float ok_float))
                       (ok_pair ok_float ok_float)
                       ok_float
+                    (exl ok_float ok_float)
+                    (exr (ok_pair ok_float ok_float) (ok_pair ok_float ok_float))))
+                (fork (ok_pair ok_float ok_float) (ok_pair ok_float ok_float) (ok_pair ok_float ok_float)
+                  (id (ok_pair ok_float ok_float))
+                  (fork (ok_pair ok_float ok_float) ok_float ok_float
+                    (compose (ok_pair ok_float ok_float) ok_float ok_float cosC
+                      (compose
+                          (ok_pair ok_float ok_float)
+                          (ok_pair (ok_pair (ok_pair (ok_pair ok_float ok_float) ok_float) ok_float) ok_float)
+                          ok_float
+                        (exr (ok_pair (ok_pair (ok_pair ok_float ok_float) ok_float) ok_float) ok_float)
+                        (compose
+                            (ok_pair ok_float ok_float)
+                            (ok_pair (ok_pair (ok_pair ok_float ok_float) ok_float) ok_float)
+                            (ok_pair (ok_pair (ok_pair (ok_pair ok_float ok_float) ok_float) ok_float) ok_float)
+                          (fork
+                              (ok_pair (ok_pair (ok_pair ok_float ok_float) ok_float) ok_float)
+                              (ok_pair (ok_pair (ok_pair ok_float ok_float) ok_float) ok_float)
+                              ok_float
+                            (id (ok_pair (ok_pair (ok_pair ok_float ok_float) ok_float) ok_float))
+                            (compose
+                                (ok_pair (ok_pair (ok_pair ok_float ok_float) ok_float) ok_float)
+                                (ok_pair ok_float ok_float)
+                                ok_float
+                              mulC
+                              (fork (ok_pair (ok_pair (ok_pair ok_float ok_float) ok_float) ok_float) ok_float ok_float
+                                (compose
+                                    (ok_pair (ok_pair (ok_pair ok_float ok_float) ok_float) ok_float)
+                                    (ok_pair (ok_pair (ok_pair (ok_pair ok_float ok_float) ok_float) ok_float) ok_float)
+                                    ok_float
+                                  (exr (ok_pair (ok_pair (ok_pair ok_float ok_float) ok_float) ok_float) ok_float)
+                                  (compose
+                                      (ok_pair (ok_pair (ok_pair ok_float ok_float) ok_float) ok_float)
+                                      (ok_pair
+                                      (ok_pair
+                                      (ok_pair (ok_pair (ok_pair ok_float ok_float) ok_float) ok_float)
+                                      ok_float)
+                                      ok_float)
+                                      (ok_pair
+                                      (ok_pair (ok_pair (ok_pair ok_float ok_float) ok_float) ok_float)
+                                      ok_float)
+                                    (exl
+                                        (ok_pair
+                                        (ok_pair (ok_pair (ok_pair ok_float ok_float) ok_float) ok_float)
+                                        ok_float)
+                                        ok_float)
+                                    (compose
+                                        (ok_pair (ok_pair (ok_pair ok_float ok_float) ok_float) ok_float)
+                                        (ok_pair
+                                        (ok_pair (ok_pair (ok_pair ok_float ok_float) ok_float) ok_float)
+                                        ok_float)
+                                        (ok_pair
+                                        (ok_pair
+                                        (ok_pair (ok_pair (ok_pair ok_float ok_float) ok_float) ok_float)
+                                        ok_float)
+                                        ok_float)
+                                      (fork
+                                          (ok_pair
+                                          (ok_pair (ok_pair (ok_pair ok_float ok_float) ok_float) ok_float)
+                                          ok_float)
+                                          (ok_pair
+                                          (ok_pair (ok_pair (ok_pair ok_float ok_float) ok_float) ok_float)
+                                          ok_float)
+                                          ok_float
+                                        (compose
+                                            (ok_pair
+                                            (ok_pair (ok_pair (ok_pair ok_float ok_float) ok_float) ok_float)
+                                            ok_float)
+                                            (ok_pair (ok_pair (ok_pair ok_float ok_float) ok_float) ok_float)
+                                            (ok_pair
+                                            (ok_pair (ok_pair (ok_pair ok_float ok_float) ok_float) ok_float)
+                                            ok_float)
+                                          (fork
+                                              (ok_pair (ok_pair (ok_pair ok_float ok_float) ok_float) ok_float)
+                                              (ok_pair (ok_pair (ok_pair ok_float ok_float) ok_float) ok_float)
+                                              ok_float
+                                            (id (ok_pair (ok_pair (ok_pair ok_float ok_float) ok_float) ok_float))
+                                            (compose
+                                                (ok_pair (ok_pair (ok_pair ok_float ok_float) ok_float) ok_float)
+                                                (ok_pair (ok_pair ok_float ok_float) ok_float)
+                                                ok_float
+                                              (exr (ok_pair ok_float ok_float) ok_float)
+                                              (exl (ok_pair (ok_pair ok_float ok_float) ok_float) ok_float)))
+                                          (exl
+                                              (ok_pair (ok_pair (ok_pair ok_float ok_float) ok_float) ok_float)
+                                              ok_float))
+                                        (exr (ok_pair (ok_pair (ok_pair ok_float ok_float) ok_float) ok_float) ok_float))
+                                      (fork
+                                          (ok_pair (ok_pair (ok_pair ok_float ok_float) ok_float) ok_float)
+                                          (ok_pair (ok_pair (ok_pair ok_float ok_float) ok_float) ok_float)
+                                          ok_float
+                                        (id (ok_pair (ok_pair (ok_pair ok_float ok_float) ok_float) ok_float))
+                                        (exr (ok_pair (ok_pair ok_float ok_float) ok_float) ok_float)))))
+                                (compose
+                                    (ok_pair (ok_pair (ok_pair ok_float ok_float) ok_float) ok_float)
+                                    (ok_pair
+                                    (ok_pair (ok_pair (ok_pair (ok_pair ok_float ok_float) ok_float) ok_float) ok_float)
+                                    ok_float)
+                                    ok_float
+                                  (exr
+                                      (ok_pair
+                                      (ok_pair (ok_pair (ok_pair ok_float ok_float) ok_float) ok_float)
+                                      ok_float)
+                                      ok_float)
+                                  (compose
+                                      (ok_pair (ok_pair (ok_pair ok_float ok_float) ok_float) ok_float)
+                                      (ok_pair
+                                      (ok_pair (ok_pair (ok_pair ok_float ok_float) ok_float) ok_float)
+                                      ok_float)
+                                      (ok_pair
+                                      (ok_pair
+                                      (ok_pair (ok_pair (ok_pair ok_float ok_float) ok_float) ok_float)
+                                      ok_float)
+                                      ok_float)
+                                    (fork
+                                        (ok_pair
+                                        (ok_pair (ok_pair (ok_pair ok_float ok_float) ok_float) ok_float)
+                                        ok_float)
+                                        (ok_pair
+                                        (ok_pair (ok_pair (ok_pair ok_float ok_float) ok_float) ok_float)
+                                        ok_float)
+                                        ok_float
+                                      (compose
+                                          (ok_pair
+                                          (ok_pair (ok_pair (ok_pair ok_float ok_float) ok_float) ok_float)
+                                          ok_float)
+                                          (ok_pair (ok_pair (ok_pair ok_float ok_float) ok_float) ok_float)
+                                          (ok_pair
+                                          (ok_pair (ok_pair (ok_pair ok_float ok_float) ok_float) ok_float)
+                                          ok_float)
+                                        (fork
+                                            (ok_pair (ok_pair (ok_pair ok_float ok_float) ok_float) ok_float)
+                                            (ok_pair (ok_pair (ok_pair ok_float ok_float) ok_float) ok_float)
+                                            ok_float
+                                          (id (ok_pair (ok_pair (ok_pair ok_float ok_float) ok_float) ok_float))
+                                          (compose
+                                              (ok_pair (ok_pair (ok_pair ok_float ok_float) ok_float) ok_float)
+                                              (ok_pair (ok_pair ok_float ok_float) ok_float)
+                                              ok_float
+                                            (exr (ok_pair ok_float ok_float) ok_float)
+                                            (exl (ok_pair (ok_pair ok_float ok_float) ok_float) ok_float)))
+                                        (exl (ok_pair (ok_pair (ok_pair ok_float ok_float) ok_float) ok_float) ok_float))
+                                      (exr (ok_pair (ok_pair (ok_pair ok_float ok_float) ok_float) ok_float) ok_float))
+                                    (fork
+                                        (ok_pair (ok_pair (ok_pair ok_float ok_float) ok_float) ok_float)
+                                        (ok_pair (ok_pair (ok_pair ok_float ok_float) ok_float) ok_float)
+                                        ok_float
+                                      (id (ok_pair (ok_pair (ok_pair ok_float ok_float) ok_float) ok_float))
+                                      (exr (ok_pair (ok_pair ok_float ok_float) ok_float) ok_float)))))))
+                          (compose
+                              (ok_pair ok_float ok_float)
+                              (ok_pair (ok_pair ok_float ok_float) ok_float)
+                              (ok_pair (ok_pair (ok_pair ok_float ok_float) ok_float) ok_float)
+                            (fork
+                                (ok_pair (ok_pair ok_float ok_float) ok_float)
+                                (ok_pair (ok_pair ok_float ok_float) ok_float)
+                                ok_float
+                              (id (ok_pair (ok_pair ok_float ok_float) ok_float))
+                              (compose
+                                  (ok_pair (ok_pair ok_float ok_float) ok_float)
+                                  (ok_pair ok_float ok_float)
+                                  ok_float
+                                (exr ok_float ok_float)
+                                (exl (ok_pair ok_float ok_float) ok_float)))
+                            (compose
+                                (ok_pair ok_float ok_float)
+                                (ok_pair ok_float ok_float)
+                                (ok_pair (ok_pair ok_float ok_float) ok_float)
+                              (fork (ok_pair ok_float ok_float) (ok_pair ok_float ok_float) ok_float
+                                (id (ok_pair ok_float ok_float))
+                                (exl ok_float ok_float))
+                              (compose
+                                  (ok_pair ok_float ok_float)
+                                  (ok_pair (ok_pair ok_float ok_float) (ok_pair ok_float ok_float))
+                                  (ok_pair ok_float ok_float)
+                                (exr (ok_pair ok_float ok_float) (ok_pair ok_float ok_float))
+                                (fork
+                                    (ok_pair ok_float ok_float)
+                                    (ok_pair ok_float ok_float)
+                                    (ok_pair ok_float ok_float)
+                                  (id (ok_pair ok_float ok_float))
+                                  (id (ok_pair ok_float ok_float)))))))))
+                    (compose (ok_pair ok_float ok_float) ok_float ok_float sinC
+                      (compose
+                          (ok_pair ok_float ok_float)
+                          (ok_pair (ok_pair (ok_pair (ok_pair ok_float ok_float) ok_float) ok_float) ok_float)
+                          ok_float
+                        (exr (ok_pair (ok_pair (ok_pair ok_float ok_float) ok_float) ok_float) ok_float)
+                        (compose
+                            (ok_pair ok_float ok_float)
+                            (ok_pair (ok_pair (ok_pair ok_float ok_float) ok_float) ok_float)
+                            (ok_pair (ok_pair (ok_pair (ok_pair ok_float ok_float) ok_float) ok_float) ok_float)
+                          (fork
+                              (ok_pair (ok_pair (ok_pair ok_float ok_float) ok_float) ok_float)
+                              (ok_pair (ok_pair (ok_pair ok_float ok_float) ok_float) ok_float)
+                              ok_float
+                            (id (ok_pair (ok_pair (ok_pair ok_float ok_float) ok_float) ok_float))
+                            (compose
+                                (ok_pair (ok_pair (ok_pair ok_float ok_float) ok_float) ok_float)
+                                (ok_pair ok_float ok_float)
+                                ok_float
+                              mulC
+                              (fork (ok_pair (ok_pair (ok_pair ok_float ok_float) ok_float) ok_float) ok_float ok_float
+                                (compose
+                                    (ok_pair (ok_pair (ok_pair ok_float ok_float) ok_float) ok_float)
+                                    (ok_pair (ok_pair (ok_pair (ok_pair ok_float ok_float) ok_float) ok_float) ok_float)
+                                    ok_float
+                                  (exr (ok_pair (ok_pair (ok_pair ok_float ok_float) ok_float) ok_float) ok_float)
+                                  (compose
+                                      (ok_pair (ok_pair (ok_pair ok_float ok_float) ok_float) ok_float)
+                                      (ok_pair
+                                      (ok_pair
+                                      (ok_pair (ok_pair (ok_pair ok_float ok_float) ok_float) ok_float)
+                                      ok_float)
+                                      ok_float)
+                                      (ok_pair
+                                      (ok_pair (ok_pair (ok_pair ok_float ok_float) ok_float) ok_float)
+                                      ok_float)
+                                    (exl
+                                        (ok_pair
+                                        (ok_pair (ok_pair (ok_pair ok_float ok_float) ok_float) ok_float)
+                                        ok_float)
+                                        ok_float)
+                                    (compose
+                                        (ok_pair (ok_pair (ok_pair ok_float ok_float) ok_float) ok_float)
+                                        (ok_pair
+                                        (ok_pair (ok_pair (ok_pair ok_float ok_float) ok_float) ok_float)
+                                        ok_float)
+                                        (ok_pair
+                                        (ok_pair
+                                        (ok_pair (ok_pair (ok_pair ok_float ok_float) ok_float) ok_float)
+                                        ok_float)
+                                        ok_float)
+                                      (fork
+                                          (ok_pair
+                                          (ok_pair (ok_pair (ok_pair ok_float ok_float) ok_float) ok_float)
+                                          ok_float)
+                                          (ok_pair
+                                          (ok_pair (ok_pair (ok_pair ok_float ok_float) ok_float) ok_float)
+                                          ok_float)
+                                          ok_float
+                                        (compose
+                                            (ok_pair
+                                            (ok_pair (ok_pair (ok_pair ok_float ok_float) ok_float) ok_float)
+                                            ok_float)
+                                            (ok_pair (ok_pair (ok_pair ok_float ok_float) ok_float) ok_float)
+                                            (ok_pair
+                                            (ok_pair (ok_pair (ok_pair ok_float ok_float) ok_float) ok_float)
+                                            ok_float)
+                                          (fork
+                                              (ok_pair (ok_pair (ok_pair ok_float ok_float) ok_float) ok_float)
+                                              (ok_pair (ok_pair (ok_pair ok_float ok_float) ok_float) ok_float)
+                                              ok_float
+                                            (id (ok_pair (ok_pair (ok_pair ok_float ok_float) ok_float) ok_float))
+                                            (compose
+                                                (ok_pair (ok_pair (ok_pair ok_float ok_float) ok_float) ok_float)
+                                                (ok_pair (ok_pair ok_float ok_float) ok_float)
+                                                ok_float
+                                              (exr (ok_pair ok_float ok_float) ok_float)
+                                              (exl (ok_pair (ok_pair ok_float ok_float) ok_float) ok_float)))
+                                          (exl
+                                              (ok_pair (ok_pair (ok_pair ok_float ok_float) ok_float) ok_float)
+                                              ok_float))
+                                        (exr (ok_pair (ok_pair (ok_pair ok_float ok_float) ok_float) ok_float) ok_float))
+                                      (fork
+                                          (ok_pair (ok_pair (ok_pair ok_float ok_float) ok_float) ok_float)
+                                          (ok_pair (ok_pair (ok_pair ok_float ok_float) ok_float) ok_float)
+                                          ok_float
+                                        (id (ok_pair (ok_pair (ok_pair ok_float ok_float) ok_float) ok_float))
+                                        (exr (ok_pair (ok_pair ok_float ok_float) ok_float) ok_float)))))
+                                (compose
+                                    (ok_pair (ok_pair (ok_pair ok_float ok_float) ok_float) ok_float)
+                                    (ok_pair
+                                    (ok_pair (ok_pair (ok_pair (ok_pair ok_float ok_float) ok_float) ok_float) ok_float)
+                                    ok_float)
+                                    ok_float
+                                  (exr
+                                      (ok_pair
+                                      (ok_pair (ok_pair (ok_pair ok_float ok_float) ok_float) ok_float)
+                                      ok_float)
+                                      ok_float)
+                                  (compose
+                                      (ok_pair (ok_pair (ok_pair ok_float ok_float) ok_float) ok_float)
+                                      (ok_pair
+                                      (ok_pair (ok_pair (ok_pair ok_float ok_float) ok_float) ok_float)
+                                      ok_float)
+                                      (ok_pair
+                                      (ok_pair
+                                      (ok_pair (ok_pair (ok_pair ok_float ok_float) ok_float) ok_float)
+                                      ok_float)
+                                      ok_float)
+                                    (fork
+                                        (ok_pair
+                                        (ok_pair (ok_pair (ok_pair ok_float ok_float) ok_float) ok_float)
+                                        ok_float)
+                                        (ok_pair
+                                        (ok_pair (ok_pair (ok_pair ok_float ok_float) ok_float) ok_float)
+                                        ok_float)
+                                        ok_float
+                                      (compose
+                                          (ok_pair
+                                          (ok_pair (ok_pair (ok_pair ok_float ok_float) ok_float) ok_float)
+                                          ok_float)
+                                          (ok_pair (ok_pair (ok_pair ok_float ok_float) ok_float) ok_float)
+                                          (ok_pair
+                                          (ok_pair (ok_pair (ok_pair ok_float ok_float) ok_float) ok_float)
+                                          ok_float)
+                                        (fork
+                                            (ok_pair (ok_pair (ok_pair ok_float ok_float) ok_float) ok_float)
+                                            (ok_pair (ok_pair (ok_pair ok_float ok_float) ok_float) ok_float)
+                                            ok_float
+                                          (id (ok_pair (ok_pair (ok_pair ok_float ok_float) ok_float) ok_float))
+                                          (compose
+                                              (ok_pair (ok_pair (ok_pair ok_float ok_float) ok_float) ok_float)
+                                              (ok_pair (ok_pair ok_float ok_float) ok_float)
+                                              ok_float
+                                            (exr (ok_pair ok_float ok_float) ok_float)
+                                            (exl (ok_pair (ok_pair ok_float ok_float) ok_float) ok_float)))
+                                        (exl (ok_pair (ok_pair (ok_pair ok_float ok_float) ok_float) ok_float) ok_float))
+                                      (exr (ok_pair (ok_pair (ok_pair ok_float ok_float) ok_float) ok_float) ok_float))
+                                    (fork
+                                        (ok_pair (ok_pair (ok_pair ok_float ok_float) ok_float) ok_float)
+                                        (ok_pair (ok_pair (ok_pair ok_float ok_float) ok_float) ok_float)
+                                        ok_float
+                                      (id (ok_pair (ok_pair (ok_pair ok_float ok_float) ok_float) ok_float))
+                                      (exr (ok_pair (ok_pair ok_float ok_float) ok_float) ok_float)))))))
+                          (compose
+                              (ok_pair ok_float ok_float)
+                              (ok_pair (ok_pair ok_float ok_float) ok_float)
+                              (ok_pair (ok_pair (ok_pair ok_float ok_float) ok_float) ok_float)
+                            (fork
+                                (ok_pair (ok_pair ok_float ok_float) ok_float)
+                                (ok_pair (ok_pair ok_float ok_float) ok_float)
+                                ok_float
+                              (id (ok_pair (ok_pair ok_float ok_float) ok_float))
+                              (compose
+                                  (ok_pair (ok_pair ok_float ok_float) ok_float)
+                                  (ok_pair ok_float ok_float)
+                                  ok_float
+                                (exr ok_float ok_float)
+                                (exl (ok_pair ok_float ok_float) ok_float)))
+                            (compose
+                                (ok_pair ok_float ok_float)
+                                (ok_pair ok_float ok_float)
+                                (ok_pair (ok_pair ok_float ok_float) ok_float)
+                              (fork (ok_pair ok_float ok_float) (ok_pair ok_float ok_float) ok_float
+                                (id (ok_pair ok_float ok_float))
+                                (exl ok_float ok_float))
+                              (compose
+                                  (ok_pair ok_float ok_float)
+                                  (ok_pair (ok_pair ok_float ok_float) (ok_pair ok_float ok_float))
+                                  (ok_pair ok_float ok_float)
+                                (exr (ok_pair ok_float ok_float) (ok_pair ok_float ok_float))
+                                (fork
+                                    (ok_pair ok_float ok_float)
+                                    (ok_pair ok_float ok_float)
+                                    (ok_pair ok_float ok_float)
+                                  (id (ok_pair ok_float ok_float))
+                                  (id (ok_pair ok_float ok_float)))))))))))))))))
+    (compose
+        (ok_pair ok_float ok_float)
+        (ok_pair
+        (ok_pair
+        (ok_pair
+        (ok_pair (ok_pair (ok_pair ok_float ok_float) (ok_pair ok_float ok_float)) ok_float)
+        ok_float)
+        ok_float)
+        ok_float)
+        ok_float
+      (exr
+          (ok_pair
+          (ok_pair
+          (ok_pair (ok_pair (ok_pair ok_float ok_float) (ok_pair ok_float ok_float)) ok_float)
+          ok_float)
+          ok_float)
+          ok_float)
+      (compose
+          (ok_pair ok_float ok_float)
+          (ok_pair
+          (ok_pair
+          (ok_pair (ok_pair (ok_pair ok_float ok_float) (ok_pair ok_float ok_float)) ok_float)
+          ok_float)
+          ok_float)
+          (ok_pair
+          (ok_pair
+          (ok_pair
+          (ok_pair (ok_pair (ok_pair ok_float ok_float) (ok_pair ok_float ok_float)) ok_float)
+          ok_float)
+          ok_float)
+          ok_float)
+        (fork
+            (ok_pair
+            (ok_pair
+            (ok_pair (ok_pair (ok_pair ok_float ok_float) (ok_pair ok_float ok_float)) ok_float)
+            ok_float)
+            ok_float)
+            (ok_pair
+            (ok_pair
+            (ok_pair (ok_pair (ok_pair ok_float ok_float) (ok_pair ok_float ok_float)) ok_float)
+            ok_float)
+            ok_float)
+            ok_float
+          (compose
+              (ok_pair
+              (ok_pair
+              (ok_pair (ok_pair (ok_pair ok_float ok_float) (ok_pair ok_float ok_float)) ok_float)
+              ok_float)
+              ok_float)
+              (ok_pair
+              (ok_pair (ok_pair (ok_pair ok_float ok_float) (ok_pair ok_float ok_float)) ok_float)
+              ok_float)
+              (ok_pair
+              (ok_pair
+              (ok_pair (ok_pair (ok_pair ok_float ok_float) (ok_pair ok_float ok_float)) ok_float)
+              ok_float)
+              ok_float)
+            (fork
+                (ok_pair
+                (ok_pair (ok_pair (ok_pair ok_float ok_float) (ok_pair ok_float ok_float)) ok_float)
+                ok_float)
+                (ok_pair
+                (ok_pair (ok_pair (ok_pair ok_float ok_float) (ok_pair ok_float ok_float)) ok_float)
+                ok_float)
+                ok_float
+              (id
+                  (ok_pair
+                  (ok_pair (ok_pair (ok_pair ok_float ok_float) (ok_pair ok_float ok_float)) ok_float)
+                  ok_float))
+              (compose
+                  (ok_pair
+                  (ok_pair (ok_pair (ok_pair ok_float ok_float) (ok_pair ok_float ok_float)) ok_float)
+                  ok_float)
+                  (ok_pair (ok_pair (ok_pair ok_float ok_float) (ok_pair ok_float ok_float)) ok_float)
+                  ok_float
+                (exr (ok_pair (ok_pair ok_float ok_float) (ok_pair ok_float ok_float)) ok_float)
+                (exl
+                    (ok_pair (ok_pair (ok_pair ok_float ok_float) (ok_pair ok_float ok_float)) ok_float)
+                    ok_float)))
+            (exl
+                (ok_pair
+                (ok_pair (ok_pair (ok_pair ok_float ok_float) (ok_pair ok_float ok_float)) ok_float)
+                ok_float)
+                ok_float))
+          (exr
+              (ok_pair
+              (ok_pair (ok_pair (ok_pair ok_float ok_float) (ok_pair ok_float ok_float)) ok_float)
+              ok_float)
+              ok_float))
+        (compose
+            (ok_pair ok_float ok_float)
+            (ok_pair
+            (ok_pair (ok_pair (ok_pair ok_float ok_float) (ok_pair ok_float ok_float)) ok_float)
+            ok_float)
+            (ok_pair
+            (ok_pair
+            (ok_pair (ok_pair (ok_pair ok_float ok_float) (ok_pair ok_float ok_float)) ok_float)
+            ok_float)
+            ok_float)
+          (fork
+              (ok_pair
+              (ok_pair (ok_pair (ok_pair ok_float ok_float) (ok_pair ok_float ok_float)) ok_float)
+              ok_float)
+              (ok_pair
+              (ok_pair (ok_pair (ok_pair ok_float ok_float) (ok_pair ok_float ok_float)) ok_float)
+              ok_float)
+              ok_float
+            (id
+                (ok_pair
+                (ok_pair (ok_pair (ok_pair ok_float ok_float) (ok_pair ok_float ok_float)) ok_float)
+                ok_float))
+            (exr
+                (ok_pair (ok_pair (ok_pair ok_float ok_float) (ok_pair ok_float ok_float)) ok_float)
+                ok_float))
+          (compose
+              (ok_pair ok_float ok_float)
+              (ok_pair (ok_pair (ok_pair ok_float ok_float) (ok_pair ok_float ok_float)) ok_float)
+              (ok_pair
+              (ok_pair (ok_pair (ok_pair ok_float ok_float) (ok_pair ok_float ok_float)) ok_float)
+              ok_float)
+            (fork
+                (ok_pair (ok_pair (ok_pair ok_float ok_float) (ok_pair ok_float ok_float)) ok_float)
+                (ok_pair (ok_pair (ok_pair ok_float ok_float) (ok_pair ok_float ok_float)) ok_float)
+                ok_float
+              (id (ok_pair (ok_pair (ok_pair ok_float ok_float) (ok_pair ok_float ok_float)) ok_float))
+              (compose
+                  (ok_pair (ok_pair (ok_pair ok_float ok_float) (ok_pair ok_float ok_float)) ok_float)
+                  (ok_pair ok_float ok_float)
+                  ok_float
+                (exr ok_float ok_float)
+                (compose
+                    (ok_pair (ok_pair (ok_pair ok_float ok_float) (ok_pair ok_float ok_float)) ok_float)
+                    (ok_pair (ok_pair ok_float ok_float) (ok_pair ok_float ok_float))
+                    (ok_pair ok_float ok_float)
+                  (exr (ok_pair ok_float ok_float) (ok_pair ok_float ok_float))
+                  (exl (ok_pair (ok_pair ok_float ok_float) (ok_pair ok_float ok_float)) ok_float))))
+            (compose
+                (ok_pair ok_float ok_float)
+                (ok_pair (ok_pair ok_float ok_float) (ok_pair ok_float ok_float))
+                (ok_pair (ok_pair (ok_pair ok_float ok_float) (ok_pair ok_float ok_float)) ok_float)
+              (fork
+                  (ok_pair (ok_pair ok_float ok_float) (ok_pair ok_float ok_float))
+                  (ok_pair (ok_pair ok_float ok_float) (ok_pair ok_float ok_float))
+                  ok_float
+                (id (ok_pair (ok_pair ok_float ok_float) (ok_pair ok_float ok_float)))
+                (compose
+                    (ok_pair (ok_pair ok_float ok_float) (ok_pair ok_float ok_float))
+                    (ok_pair ok_float ok_float)
+                    ok_float
+                  (exl ok_float ok_float)
+                  (exr (ok_pair ok_float ok_float) (ok_pair ok_float ok_float))))
+              (fork (ok_pair ok_float ok_float) (ok_pair ok_float ok_float) (ok_pair ok_float ok_float)
+                (id (ok_pair ok_float ok_float))
+                (fork (ok_pair ok_float ok_float) ok_float ok_float
+                  (compose (ok_pair ok_float ok_float) ok_float ok_float cosC
                     (compose
-                        (ok_pair (ok_pair ok_float ok_float) (ok_pair ok_float ok_float))
                         (ok_pair ok_float ok_float)
-                        (ok_pair ok_float ok_float)
-                      (id (ok_pair ok_float ok_float))
-                      (exr (ok_pair ok_float ok_float) (ok_pair ok_float ok_float)))
-                    (compose
-                        (ok_pair (ok_pair ok_float ok_float) (ok_pair ok_float ok_float))
-                        (ok_pair ok_float ok_float)
+                        (ok_pair (ok_pair (ok_pair (ok_pair ok_float ok_float) ok_float) ok_float) ok_float)
                         ok_float
-                      (exl ok_float ok_float)
-                      (exr (ok_pair ok_float ok_float) (ok_pair ok_float ok_float))))
-                  (fork (ok_pair ok_float ok_float) (ok_pair ok_float ok_float) (ok_pair ok_float ok_float)
-                    (id (ok_pair ok_float ok_float))
-                    (id (ok_pair ok_float ok_float)))))))))))
+                      (exr (ok_pair (ok_pair (ok_pair ok_float ok_float) ok_float) ok_float) ok_float)
+                      (compose
+                          (ok_pair ok_float ok_float)
+                          (ok_pair (ok_pair (ok_pair ok_float ok_float) ok_float) ok_float)
+                          (ok_pair (ok_pair (ok_pair (ok_pair ok_float ok_float) ok_float) ok_float) ok_float)
+                        (fork
+                            (ok_pair (ok_pair (ok_pair ok_float ok_float) ok_float) ok_float)
+                            (ok_pair (ok_pair (ok_pair ok_float ok_float) ok_float) ok_float)
+                            ok_float
+                          (id (ok_pair (ok_pair (ok_pair ok_float ok_float) ok_float) ok_float))
+                          (compose
+                              (ok_pair (ok_pair (ok_pair ok_float ok_float) ok_float) ok_float)
+                              (ok_pair ok_float ok_float)
+                              ok_float
+                            mulC
+                            (fork (ok_pair (ok_pair (ok_pair ok_float ok_float) ok_float) ok_float) ok_float ok_float
+                              (compose
+                                  (ok_pair (ok_pair (ok_pair ok_float ok_float) ok_float) ok_float)
+                                  (ok_pair (ok_pair (ok_pair (ok_pair ok_float ok_float) ok_float) ok_float) ok_float)
+                                  ok_float
+                                (exr (ok_pair (ok_pair (ok_pair ok_float ok_float) ok_float) ok_float) ok_float)
+                                (compose
+                                    (ok_pair (ok_pair (ok_pair ok_float ok_float) ok_float) ok_float)
+                                    (ok_pair
+                                    (ok_pair (ok_pair (ok_pair (ok_pair ok_float ok_float) ok_float) ok_float) ok_float)
+                                    ok_float)
+                                    (ok_pair (ok_pair (ok_pair (ok_pair ok_float ok_float) ok_float) ok_float) ok_float)
+                                  (exl
+                                      (ok_pair
+                                      (ok_pair (ok_pair (ok_pair ok_float ok_float) ok_float) ok_float)
+                                      ok_float)
+                                      ok_float)
+                                  (compose
+                                      (ok_pair (ok_pair (ok_pair ok_float ok_float) ok_float) ok_float)
+                                      (ok_pair
+                                      (ok_pair (ok_pair (ok_pair ok_float ok_float) ok_float) ok_float)
+                                      ok_float)
+                                      (ok_pair
+                                      (ok_pair
+                                      (ok_pair (ok_pair (ok_pair ok_float ok_float) ok_float) ok_float)
+                                      ok_float)
+                                      ok_float)
+                                    (fork
+                                        (ok_pair
+                                        (ok_pair (ok_pair (ok_pair ok_float ok_float) ok_float) ok_float)
+                                        ok_float)
+                                        (ok_pair
+                                        (ok_pair (ok_pair (ok_pair ok_float ok_float) ok_float) ok_float)
+                                        ok_float)
+                                        ok_float
+                                      (compose
+                                          (ok_pair
+                                          (ok_pair (ok_pair (ok_pair ok_float ok_float) ok_float) ok_float)
+                                          ok_float)
+                                          (ok_pair (ok_pair (ok_pair ok_float ok_float) ok_float) ok_float)
+                                          (ok_pair
+                                          (ok_pair (ok_pair (ok_pair ok_float ok_float) ok_float) ok_float)
+                                          ok_float)
+                                        (fork
+                                            (ok_pair (ok_pair (ok_pair ok_float ok_float) ok_float) ok_float)
+                                            (ok_pair (ok_pair (ok_pair ok_float ok_float) ok_float) ok_float)
+                                            ok_float
+                                          (id (ok_pair (ok_pair (ok_pair ok_float ok_float) ok_float) ok_float))
+                                          (compose
+                                              (ok_pair (ok_pair (ok_pair ok_float ok_float) ok_float) ok_float)
+                                              (ok_pair (ok_pair ok_float ok_float) ok_float)
+                                              ok_float
+                                            (exr (ok_pair ok_float ok_float) ok_float)
+                                            (exl (ok_pair (ok_pair ok_float ok_float) ok_float) ok_float)))
+                                        (exl (ok_pair (ok_pair (ok_pair ok_float ok_float) ok_float) ok_float) ok_float))
+                                      (exr (ok_pair (ok_pair (ok_pair ok_float ok_float) ok_float) ok_float) ok_float))
+                                    (fork
+                                        (ok_pair (ok_pair (ok_pair ok_float ok_float) ok_float) ok_float)
+                                        (ok_pair (ok_pair (ok_pair ok_float ok_float) ok_float) ok_float)
+                                        ok_float
+                                      (id (ok_pair (ok_pair (ok_pair ok_float ok_float) ok_float) ok_float))
+                                      (exr (ok_pair (ok_pair ok_float ok_float) ok_float) ok_float)))))
+                              (compose
+                                  (ok_pair (ok_pair (ok_pair ok_float ok_float) ok_float) ok_float)
+                                  (ok_pair
+                                  (ok_pair (ok_pair (ok_pair (ok_pair ok_float ok_float) ok_float) ok_float) ok_float)
+                                  ok_float)
+                                  ok_float
+                                (exr
+                                    (ok_pair (ok_pair (ok_pair (ok_pair ok_float ok_float) ok_float) ok_float) ok_float)
+                                    ok_float)
+                                (compose
+                                    (ok_pair (ok_pair (ok_pair ok_float ok_float) ok_float) ok_float)
+                                    (ok_pair (ok_pair (ok_pair (ok_pair ok_float ok_float) ok_float) ok_float) ok_float)
+                                    (ok_pair
+                                    (ok_pair (ok_pair (ok_pair (ok_pair ok_float ok_float) ok_float) ok_float) ok_float)
+                                    ok_float)
+                                  (fork
+                                      (ok_pair
+                                      (ok_pair (ok_pair (ok_pair ok_float ok_float) ok_float) ok_float)
+                                      ok_float)
+                                      (ok_pair
+                                      (ok_pair (ok_pair (ok_pair ok_float ok_float) ok_float) ok_float)
+                                      ok_float)
+                                      ok_float
+                                    (compose
+                                        (ok_pair
+                                        (ok_pair (ok_pair (ok_pair ok_float ok_float) ok_float) ok_float)
+                                        ok_float)
+                                        (ok_pair (ok_pair (ok_pair ok_float ok_float) ok_float) ok_float)
+                                        (ok_pair
+                                        (ok_pair (ok_pair (ok_pair ok_float ok_float) ok_float) ok_float)
+                                        ok_float)
+                                      (fork
+                                          (ok_pair (ok_pair (ok_pair ok_float ok_float) ok_float) ok_float)
+                                          (ok_pair (ok_pair (ok_pair ok_float ok_float) ok_float) ok_float)
+                                          ok_float
+                                        (id (ok_pair (ok_pair (ok_pair ok_float ok_float) ok_float) ok_float))
+                                        (compose
+                                            (ok_pair (ok_pair (ok_pair ok_float ok_float) ok_float) ok_float)
+                                            (ok_pair (ok_pair ok_float ok_float) ok_float)
+                                            ok_float
+                                          (exr (ok_pair ok_float ok_float) ok_float)
+                                          (exl (ok_pair (ok_pair ok_float ok_float) ok_float) ok_float)))
+                                      (exl (ok_pair (ok_pair (ok_pair ok_float ok_float) ok_float) ok_float) ok_float))
+                                    (exr (ok_pair (ok_pair (ok_pair ok_float ok_float) ok_float) ok_float) ok_float))
+                                  (fork
+                                      (ok_pair (ok_pair (ok_pair ok_float ok_float) ok_float) ok_float)
+                                      (ok_pair (ok_pair (ok_pair ok_float ok_float) ok_float) ok_float)
+                                      ok_float
+                                    (id (ok_pair (ok_pair (ok_pair ok_float ok_float) ok_float) ok_float))
+                                    (exr (ok_pair (ok_pair ok_float ok_float) ok_float) ok_float)))))))
+                        (compose
+                            (ok_pair ok_float ok_float)
+                            (ok_pair (ok_pair ok_float ok_float) ok_float)
+                            (ok_pair (ok_pair (ok_pair ok_float ok_float) ok_float) ok_float)
+                          (fork
+                              (ok_pair (ok_pair ok_float ok_float) ok_float)
+                              (ok_pair (ok_pair ok_float ok_float) ok_float)
+                              ok_float
+                            (id (ok_pair (ok_pair ok_float ok_float) ok_float))
+                            (compose (ok_pair (ok_pair ok_float ok_float) ok_float) (ok_pair ok_float ok_float) ok_float
+                              (exr ok_float ok_float)
+                              (exl (ok_pair ok_float ok_float) ok_float)))
+                          (compose
+                              (ok_pair ok_float ok_float)
+                              (ok_pair ok_float ok_float)
+                              (ok_pair (ok_pair ok_float ok_float) ok_float)
+                            (fork (ok_pair ok_float ok_float) (ok_pair ok_float ok_float) ok_float
+                              (id (ok_pair ok_float ok_float))
+                              (exl ok_float ok_float))
+                            (compose
+                                (ok_pair ok_float ok_float)
+                                (ok_pair (ok_pair ok_float ok_float) (ok_pair ok_float ok_float))
+                                (ok_pair ok_float ok_float)
+                              (exr (ok_pair ok_float ok_float) (ok_pair ok_float ok_float))
+                              (fork (ok_pair ok_float ok_float) (ok_pair ok_float ok_float) (ok_pair ok_float ok_float)
+                                (id (ok_pair ok_float ok_float))
+                                (id (ok_pair ok_float ok_float)))))))))
+                  (compose (ok_pair ok_float ok_float) ok_float ok_float sinC
+                    (compose
+                        (ok_pair ok_float ok_float)
+                        (ok_pair (ok_pair (ok_pair (ok_pair ok_float ok_float) ok_float) ok_float) ok_float)
+                        ok_float
+                      (exr (ok_pair (ok_pair (ok_pair ok_float ok_float) ok_float) ok_float) ok_float)
+                      (compose
+                          (ok_pair ok_float ok_float)
+                          (ok_pair (ok_pair (ok_pair ok_float ok_float) ok_float) ok_float)
+                          (ok_pair (ok_pair (ok_pair (ok_pair ok_float ok_float) ok_float) ok_float) ok_float)
+                        (fork
+                            (ok_pair (ok_pair (ok_pair ok_float ok_float) ok_float) ok_float)
+                            (ok_pair (ok_pair (ok_pair ok_float ok_float) ok_float) ok_float)
+                            ok_float
+                          (id (ok_pair (ok_pair (ok_pair ok_float ok_float) ok_float) ok_float))
+                          (compose
+                              (ok_pair (ok_pair (ok_pair ok_float ok_float) ok_float) ok_float)
+                              (ok_pair ok_float ok_float)
+                              ok_float
+                            mulC
+                            (fork (ok_pair (ok_pair (ok_pair ok_float ok_float) ok_float) ok_float) ok_float ok_float
+                              (compose
+                                  (ok_pair (ok_pair (ok_pair ok_float ok_float) ok_float) ok_float)
+                                  (ok_pair (ok_pair (ok_pair (ok_pair ok_float ok_float) ok_float) ok_float) ok_float)
+                                  ok_float
+                                (exr (ok_pair (ok_pair (ok_pair ok_float ok_float) ok_float) ok_float) ok_float)
+                                (compose
+                                    (ok_pair (ok_pair (ok_pair ok_float ok_float) ok_float) ok_float)
+                                    (ok_pair
+                                    (ok_pair (ok_pair (ok_pair (ok_pair ok_float ok_float) ok_float) ok_float) ok_float)
+                                    ok_float)
+                                    (ok_pair (ok_pair (ok_pair (ok_pair ok_float ok_float) ok_float) ok_float) ok_float)
+                                  (exl
+                                      (ok_pair
+                                      (ok_pair (ok_pair (ok_pair ok_float ok_float) ok_float) ok_float)
+                                      ok_float)
+                                      ok_float)
+                                  (compose
+                                      (ok_pair (ok_pair (ok_pair ok_float ok_float) ok_float) ok_float)
+                                      (ok_pair
+                                      (ok_pair (ok_pair (ok_pair ok_float ok_float) ok_float) ok_float)
+                                      ok_float)
+                                      (ok_pair
+                                      (ok_pair
+                                      (ok_pair (ok_pair (ok_pair ok_float ok_float) ok_float) ok_float)
+                                      ok_float)
+                                      ok_float)
+                                    (fork
+                                        (ok_pair
+                                        (ok_pair (ok_pair (ok_pair ok_float ok_float) ok_float) ok_float)
+                                        ok_float)
+                                        (ok_pair
+                                        (ok_pair (ok_pair (ok_pair ok_float ok_float) ok_float) ok_float)
+                                        ok_float)
+                                        ok_float
+                                      (compose
+                                          (ok_pair
+                                          (ok_pair (ok_pair (ok_pair ok_float ok_float) ok_float) ok_float)
+                                          ok_float)
+                                          (ok_pair (ok_pair (ok_pair ok_float ok_float) ok_float) ok_float)
+                                          (ok_pair
+                                          (ok_pair (ok_pair (ok_pair ok_float ok_float) ok_float) ok_float)
+                                          ok_float)
+                                        (fork
+                                            (ok_pair (ok_pair (ok_pair ok_float ok_float) ok_float) ok_float)
+                                            (ok_pair (ok_pair (ok_pair ok_float ok_float) ok_float) ok_float)
+                                            ok_float
+                                          (id (ok_pair (ok_pair (ok_pair ok_float ok_float) ok_float) ok_float))
+                                          (compose
+                                              (ok_pair (ok_pair (ok_pair ok_float ok_float) ok_float) ok_float)
+                                              (ok_pair (ok_pair ok_float ok_float) ok_float)
+                                              ok_float
+                                            (exr (ok_pair ok_float ok_float) ok_float)
+                                            (exl (ok_pair (ok_pair ok_float ok_float) ok_float) ok_float)))
+                                        (exl (ok_pair (ok_pair (ok_pair ok_float ok_float) ok_float) ok_float) ok_float))
+                                      (exr (ok_pair (ok_pair (ok_pair ok_float ok_float) ok_float) ok_float) ok_float))
+                                    (fork
+                                        (ok_pair (ok_pair (ok_pair ok_float ok_float) ok_float) ok_float)
+                                        (ok_pair (ok_pair (ok_pair ok_float ok_float) ok_float) ok_float)
+                                        ok_float
+                                      (id (ok_pair (ok_pair (ok_pair ok_float ok_float) ok_float) ok_float))
+                                      (exr (ok_pair (ok_pair ok_float ok_float) ok_float) ok_float)))))
+                              (compose
+                                  (ok_pair (ok_pair (ok_pair ok_float ok_float) ok_float) ok_float)
+                                  (ok_pair
+                                  (ok_pair (ok_pair (ok_pair (ok_pair ok_float ok_float) ok_float) ok_float) ok_float)
+                                  ok_float)
+                                  ok_float
+                                (exr
+                                    (ok_pair (ok_pair (ok_pair (ok_pair ok_float ok_float) ok_float) ok_float) ok_float)
+                                    ok_float)
+                                (compose
+                                    (ok_pair (ok_pair (ok_pair ok_float ok_float) ok_float) ok_float)
+                                    (ok_pair (ok_pair (ok_pair (ok_pair ok_float ok_float) ok_float) ok_float) ok_float)
+                                    (ok_pair
+                                    (ok_pair (ok_pair (ok_pair (ok_pair ok_float ok_float) ok_float) ok_float) ok_float)
+                                    ok_float)
+                                  (fork
+                                      (ok_pair
+                                      (ok_pair (ok_pair (ok_pair ok_float ok_float) ok_float) ok_float)
+                                      ok_float)
+                                      (ok_pair
+                                      (ok_pair (ok_pair (ok_pair ok_float ok_float) ok_float) ok_float)
+                                      ok_float)
+                                      ok_float
+                                    (compose
+                                        (ok_pair
+                                        (ok_pair (ok_pair (ok_pair ok_float ok_float) ok_float) ok_float)
+                                        ok_float)
+                                        (ok_pair (ok_pair (ok_pair ok_float ok_float) ok_float) ok_float)
+                                        (ok_pair
+                                        (ok_pair (ok_pair (ok_pair ok_float ok_float) ok_float) ok_float)
+                                        ok_float)
+                                      (fork
+                                          (ok_pair (ok_pair (ok_pair ok_float ok_float) ok_float) ok_float)
+                                          (ok_pair (ok_pair (ok_pair ok_float ok_float) ok_float) ok_float)
+                                          ok_float
+                                        (id (ok_pair (ok_pair (ok_pair ok_float ok_float) ok_float) ok_float))
+                                        (compose
+                                            (ok_pair (ok_pair (ok_pair ok_float ok_float) ok_float) ok_float)
+                                            (ok_pair (ok_pair ok_float ok_float) ok_float)
+                                            ok_float
+                                          (exr (ok_pair ok_float ok_float) ok_float)
+                                          (exl (ok_pair (ok_pair ok_float ok_float) ok_float) ok_float)))
+                                      (exl (ok_pair (ok_pair (ok_pair ok_float ok_float) ok_float) ok_float) ok_float))
+                                    (exr (ok_pair (ok_pair (ok_pair ok_float ok_float) ok_float) ok_float) ok_float))
+                                  (fork
+                                      (ok_pair (ok_pair (ok_pair ok_float ok_float) ok_float) ok_float)
+                                      (ok_pair (ok_pair (ok_pair ok_float ok_float) ok_float) ok_float)
+                                      ok_float
+                                    (id (ok_pair (ok_pair (ok_pair ok_float ok_float) ok_float) ok_float))
+                                    (exr (ok_pair (ok_pair ok_float ok_float) ok_float) ok_float)))))))
+                        (compose
+                            (ok_pair ok_float ok_float)
+                            (ok_pair (ok_pair ok_float ok_float) ok_float)
+                            (ok_pair (ok_pair (ok_pair ok_float ok_float) ok_float) ok_float)
+                          (fork
+                              (ok_pair (ok_pair ok_float ok_float) ok_float)
+                              (ok_pair (ok_pair ok_float ok_float) ok_float)
+                              ok_float
+                            (id (ok_pair (ok_pair ok_float ok_float) ok_float))
+                            (compose (ok_pair (ok_pair ok_float ok_float) ok_float) (ok_pair ok_float ok_float) ok_float
+                              (exr ok_float ok_float)
+                              (exl (ok_pair ok_float ok_float) ok_float)))
+                          (compose
+                              (ok_pair ok_float ok_float)
+                              (ok_pair ok_float ok_float)
+                              (ok_pair (ok_pair ok_float ok_float) ok_float)
+                            (fork (ok_pair ok_float ok_float) (ok_pair ok_float ok_float) ok_float
+                              (id (ok_pair ok_float ok_float))
+                              (exl ok_float ok_float))
+                            (compose
+                                (ok_pair ok_float ok_float)
+                                (ok_pair (ok_pair ok_float ok_float) (ok_pair ok_float ok_float))
+                                (ok_pair ok_float ok_float)
+                              (exr (ok_pair ok_float ok_float) (ok_pair ok_float ok_float))
+                              (fork (ok_pair ok_float ok_float) (ok_pair ok_float ok_float) (ok_pair ok_float ok_float)
+                                (id (ok_pair ok_float ok_float))
+                                (id (ok_pair ok_float ok_float)))))))))))))))))
 )
 end
