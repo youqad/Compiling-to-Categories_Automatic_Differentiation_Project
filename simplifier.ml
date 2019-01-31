@@ -41,13 +41,13 @@ let rec flattened_from_combinator : Target.t -> seq flattened_composition = func
     Seq (ok_in, oka, [Morph (ok_in, oka, Exl (oka, okb))])
   | Exr (oka, okb) ->
     let ok_in = OkPair (oka, okb) in 
-    Seq (ok_in, okb, [Morph (ok_in, okb, Exl (oka, okb))])
+    Seq (ok_in, okb, [Morph (ok_in, okb, Exr (oka, okb))])
   | It ok -> Seq (ok, OkUnit, [Morph (ok, OkUnit, It ok)])
   | Primitive p -> (
       match p with
       | Sin | Cos | Exp | Inv | Neg -> Seq (OkFloat, OkFloat, [Morph (OkFloat, OkFloat, Primitive p)])
       | Add | Mul -> 
-        let ok_in = OkArrow (OkFloat, OkFloat) in
+        let ok_in = OkPair (OkFloat, OkFloat) in
         Seq (ok_in, OkFloat, [Morph (ok_in, OkFloat, Primitive p)])
     )
   | App (comb1, comb2) -> (
@@ -61,9 +61,9 @@ let rec flattened_from_combinator : Target.t -> seq flattened_composition = func
       | App (Compose (oka, okb, okc), comb1) -> 
         let Seq (ok1_in, ok1_out, seq1) = flattened_from_combinator comb1 in
         let Seq (ok2_in, ok2_out, seq2) = flattened_from_combinator comb2 in
-        assert (oka = ok1_in); 
-        assert (okb = ok1_out && okb = ok2_in); 
-        assert (okc = ok2_out);
+        assert (oka = ok2_in); 
+        assert (okb = ok1_in && okb = ok2_out); 
+        assert (okc = ok1_out);
         Seq (oka, okc, seq1 @ seq2)
       | App (Fork (oka, okc, okd), comb1) -> 
         let Seq (ok1_in, ok1_out, _) as s1 = flattened_from_combinator comb1 in
@@ -75,6 +75,9 @@ let rec flattened_from_combinator : Target.t -> seq flattened_composition = func
         Seq (oka, ok_out, [Appl (oka, ok_out, fork)])
       | Curry (oka, okb, okc) -> 
         let Seq (ok2_in, ok2_out, _) as s2 = flattened_from_combinator comb2 in
+        (* print_string ("ok2_in: " ^ (string_of_ok ok2_in) 
+        ^ "\n oka: " ^ (string_of_ok oka)
+        ^ "\n okb: " ^ (string_of_ok okb)); *)
         assert (OkPair(oka, okb) = ok2_in); assert (okc = ok2_out);
         let curry = Curry (oka, okb, okc, s2) in
         let ok_out = OkArrow (okb, okc) in
@@ -93,6 +96,53 @@ let rec flattened_from_combinator : Target.t -> seq flattened_composition = func
       | _ -> raise Ill_formed_combinator
     )
   | _ -> raise Ill_formed_combinator
+
+
+let rec combinator_from_flattened : type a. a flattened_composition -> Target.t = function
+  | Seq (ok_in, ok_out, seq_list) -> (
+    match seq_list with
+    | [] -> Identity ok_in
+    | [node] -> combinator_from_flattened node
+    | h1 :: t -> 
+      let okh1_in, okh1_out = get_oks h1 in
+      let h1_comb = combinator_from_flattened h1 in
+      let t_comb = combinator_from_flattened (Seq (ok_in, okh1_in, t)) in
+      assert (okh1_out = ok_out); 
+      (Compose (ok_in, okh1_in, ok_out) ++ h1_comb) ++ t_comb
+    )
+  | Morph (ok_in, ok_out, morph) -> (
+    match morph with
+    | Identity ok -> Identity ok
+    | Apply (oka, okb) -> Apply (oka, okb)
+    | Exl (oka, okb) -> Exl (oka, okb)
+    | Exr (oka, okb) -> Exr (oka, okb)
+    | It ok -> It ok
+    | UnitArrowLit (ok, lit) -> UnitArrow OkFloat ++ Literal lit
+    | Primitive p -> Primitive p
+    )
+  | Appl (ok_in, ok_out, app) -> (
+    match app with 
+    | Fork (oka, okc, okd, seq1, seq2) -> 
+      let okseq1_in, okseq1_out = get_oks seq1 in
+      let okseq2_in, okseq2_out = get_oks seq2 in
+      let seq1_comb = combinator_from_flattened seq1 in
+      let seq2_comb = combinator_from_flattened seq2 in
+      assert (oka = okseq1_in && oka = okseq2_in); 
+      assert (okc = okseq1_out); assert (okd = okseq2_out);
+      (Fork (oka, okc, okd) ++ seq1_comb) ++ seq2_comb 
+    | Curry (oka, okb, okc, seq) -> 
+      let okseq_in, okseq_out = get_oks seq in
+      let seq_comb = combinator_from_flattened seq in
+      assert (okseq_in = OkPair(oka, okb)); 
+      assert (okseq_out = okc);
+      Curry (oka, okb, okc) ++ seq_comb
+    | UnCurry (oka, okb, okc, seq) -> 
+      let okseq_in, okseq_out = get_oks seq in
+      let seq_comb = combinator_from_flattened seq in
+      assert (okseq_in = oka); 
+      assert (okseq_out = OkArrow(okb, okc));
+      UnCurry (oka, okb, okc) ++ seq_comb
+    )
 
 
 let rec apply_rewriting_rules_once (seq_list: intern_node flattened_composition list) =
@@ -205,57 +255,15 @@ let rec apply_rewriting_rules (seq: seq flattened_composition) =
   done; 
   Seq (ok_in, ok_out, !seq_list_ref)
 
-let rec combinator_from_flattened : type a. a flattened_composition -> Target.t = function
-  | Seq (ok_in, ok_out, seq_list) -> (
-    match seq_list with
-    | [] -> Identity ok_in
-    | [node] -> combinator_from_flattened node
-    | h1 :: t -> 
-      let okh1_in, okh1_out = get_oks h1 in
-      let h1_comb = combinator_from_flattened h1 in
-      let t_comb = combinator_from_flattened (Seq (ok_in, okh1_in, t)) in
-      assert (okh1_out = ok_out); 
-      (Compose (ok_in, okh1_in, ok_out) ++ h1_comb) ++ t_comb
-    )
-  | Morph (ok_in, ok_out, morph) -> (
-    match morph with
-    | Identity ok -> Identity ok
-    | Apply (oka, okb) -> Apply (oka, okb)
-    | Exl (oka, okb) -> Exl (oka, okb)
-    | Exr (oka, okb) -> Exr (oka, okb)
-    | It ok -> It ok
-    | UnitArrowLit (ok, lit) -> UnitArrow OkFloat ++ Literal lit
-    | Primitive p -> Primitive p
-    )
-  | Appl (ok_in, ok_out, app) -> (
-    match app with 
-    | Fork (oka, okc, okd, seq1, seq2) -> 
-      let okseq1_in, okseq1_out = get_oks seq1 in
-      let okseq2_in, okseq2_out = get_oks seq2 in
-      let seq1_comb = combinator_from_flattened seq1 in
-      let seq2_comb = combinator_from_flattened seq2 in
-      assert (oka = okseq1_in && oka = okseq2_in); 
-      assert (okc = okseq1_out); assert (okd = okseq2_out);
-      (Fork (oka, okc, okd) ++ seq1_comb) ++ seq2_comb 
-    | Curry (oka, okb, okc, seq) -> 
-      let okseq_in, okseq_out = get_oks seq in
-      let seq_comb = combinator_from_flattened seq in
-      assert (okseq_in = OkPair(oka, okb)); 
-      assert (okseq_out = okc);
-      Curry (oka, okb, okc) ++ seq_comb
-    | UnCurry (oka, okb, okc, seq) -> 
-      let okseq_in, okseq_out = get_oks seq in
-      let seq_comb = combinator_from_flattened seq in
-      assert (okseq_in = oka); 
-      assert (okseq_out = OkArrow(okb, okc));
-      UnCurry (oka, okb, okc) ++ seq_comb
-    )
-
 
 (** [rewrite defs] applies category laws to remove [apply] and [curry]
     from the compiled programs. *)
 let rewrite : Target.program -> Target.program = fun defs ->
   if !Options.simplify then
-    failwith "Student! This is your job!"
+    List.map (
+      fun (b, t) -> 
+        let flattened_t = flattened_from_combinator t in
+        b, combinator_from_flattened (apply_rewriting_rules flattened_t)
+    ) defs
   else
     defs

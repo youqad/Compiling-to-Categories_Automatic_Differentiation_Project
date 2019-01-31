@@ -2,41 +2,6 @@ open Source
 open Target
 open Typechecker
 
-let string_of_ok t =
-   let open PPrint in
-   let rec ty = function
-     | OkFloat ->
-        string "float"
-     | OkUnit ->
-        string "unit"
-     | OkArrow (input, output) ->
-        group (mayparen_ty_under_arrow_lhs input) ^^ break 1
-        ^^ string "->"
-        ^^ break 1 ^^ (group (ty output))
-     | OkPair (lhs, rhs) ->
-        group (mayparen_ty_under_pair_lhs lhs) ^^ break 1
-        ^^ string "* " ^^ group (mayparen_ty_under_pair_rhs rhs)
-     and mayparen_ty_under_arrow_lhs = function
-       | (OkArrow _) as t ->
-          PPrintCombinators.parens (ty t)
-       | t ->
-          ty t
-     and mayparen_ty_under_pair_lhs = function
-       | (OkArrow _) as t ->
-          PPrintCombinators.parens (ty t)
-       | t ->
-          ty t
-     and mayparen_ty_under_pair_rhs = function
-       | (OkArrow _ | OkPair _) as t ->
-          PPrintCombinators.parens (ty t)
-       | t ->
-          ty t
-   in
-   let b = Buffer.create 13 in
-   PPrintEngine.ToBuffer.pretty 0.8 80 b (group (ty t));
-   Buffer.contents b
-
-
 let rec ok_type = function  
    | TyConstant TyFloat -> OkFloat
    | TyArrow (input, ouput) -> OkArrow (ok_type input, ok_type ouput)
