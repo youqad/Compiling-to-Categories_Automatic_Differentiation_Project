@@ -142,13 +142,16 @@ let rec apply_rewriting_rules_once (seq_list: intern_node flattened_composition 
       Some (Wrap (Appl (okg_in, okcurry_out, Curry (okg_in, okb, okf_out, seqf_fork_gExl_Exr))))
     | _ -> None
     in
-  match seq_list with
-  | [] -> None
-  | [h] -> let h' = apply_unary_rules_once h in (
-    match h' with
-    | None -> None
-    | Some h' -> Some [h']
-  )
+  let seq_list_has_been_modified = ref false in
+  let seq_list' = List.map (
+    fun node -> 
+      let node' = apply_unary_rules_once node in
+      match node' with 
+      | None -> node
+      | Some node'' -> seq_list_has_been_modified := true; node''
+    ) seq_list in
+  match seq_list' with
+  | [] | [_] -> if !seq_list_has_been_modified then Some seq_list' else None
   | h1 :: (h2 :: t as l) -> 
     let h' = apply_binary_rules_once h1 h2 in ( 
     match h' with
