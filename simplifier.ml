@@ -235,31 +235,32 @@ let rec apply_rewriting_rules_once (seq_list: intern_node flattened_composition 
 
 let rec apply_rewriting_rules (seq: seq flattened_composition) = 
   let Seq (ok_in, ok_out, seq_list) = seq in
-  let seq_list' =
-  List.map (
-    function
-      | (Morph _) as node -> node
-      | Appl (ok_in, ok_out, app_t) -> (
-        match app_t with
-        | Curry (oka, okb, okc, seq') -> 
-          let new_seq' = apply_rewriting_rules seq' in 
-          Appl (ok_in, ok_out, Curry (oka, okb, okc, new_seq'))
-        | UnCurry (oka, okb, okc, seq') ->
-          let new_seq' = apply_rewriting_rules seq' in 
-          Appl (ok_in, ok_out, UnCurry (oka, okb, okc, new_seq'))
-        | Fork (oka, okc, okd, seq', seq'') -> 
-          let new_seq' = apply_rewriting_rules seq' in 
-          let new_seq'' = apply_rewriting_rules seq'' in 
-          Appl (ok_in, ok_out, Fork (oka, okc, okd, new_seq', new_seq''))
-      ) 
-  ) seq_list in
+  let apply_inside_nodes =
+    List.map (
+      function
+        | (Morph _) as node -> node
+        | Appl (ok_in, ok_out, app_t) -> (
+          match app_t with
+          | Curry (oka, okb, okc, seq') -> 
+            let new_seq' = apply_rewriting_rules seq' in 
+            Appl (ok_in, ok_out, Curry (oka, okb, okc, new_seq'))
+          | UnCurry (oka, okb, okc, seq') ->
+            let new_seq' = apply_rewriting_rules seq' in 
+            Appl (ok_in, ok_out, UnCurry (oka, okb, okc, new_seq'))
+          | Fork (oka, okc, okd, seq', seq'') -> 
+            let new_seq' = apply_rewriting_rules seq' in 
+            let new_seq'' = apply_rewriting_rules seq'' in 
+            Appl (ok_in, ok_out, Fork (oka, okc, okd, new_seq', new_seq''))
+        ) 
+    ) 
+  in
+  let seq_list_ref = ref (apply_inside_nodes seq_list) in
   let has_been_modified = ref true in 
-  let seq_list_ref = ref seq_list' in
   while !has_been_modified do
     let new_seq_list = apply_rewriting_rules_once !seq_list_ref in (
       match new_seq_list with 
       | None -> has_been_modified := false
-      | Some seq_list'' -> seq_list_ref := seq_list''
+      | Some seq_list'' -> seq_list_ref := apply_inside_nodes seq_list''
     )
   done; 
   Seq (ok_in, ok_out, !seq_list_ref)

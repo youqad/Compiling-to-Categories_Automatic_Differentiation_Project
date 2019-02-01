@@ -11,11 +11,7 @@ module Make (C : sig
 end) = struct
   include CartesianCatDerivedOperations (C)
   open C
-let sigmoid = C.(
-compose ok_float ok_float ok_float invC
-  (compose ok_float (ok_pair ok_float ok_float) ok_float addC
-    (fork ok_float ok_float ok_float
-      (compose ok_float ok_unit ok_float (unit_arrow ok_float 1.) (it ok_float))
-      (compose ok_float ok_float ok_float expC negC)))
+let fsnd = C.(
+exr ok_float ok_float
 )
 end

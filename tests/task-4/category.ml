@@ -945,7 +945,7 @@ end
   let todo = D (fun _ -> failwith "Students! This is your job!")
 
   let negC = 
-    linearD (M.negC) (C.negC)
+    linearD (C.Num.neg) (C.negC)
 
   let addC =
     linearD (M.addC) (C.addC)
@@ -953,7 +953,7 @@ end
   let mulC =    
     let mul' (a, b) = 
       let scale_ba = C.scale b, C.scale a in 
-      (M.mulC (a, b), CoC.join C.ok_t C.ok_t C.ok_t scale_ba)
+      (C.Num.mul a b, CoC.join C.ok_t C.ok_t C.ok_t scale_ba)
     in D mul'
 
   let sinC = 
@@ -964,7 +964,7 @@ end
   let cosC =
     let cos' a = 
       let sin_a = Floating.sin a in
-      (Floating.cos a, C.scale (M.negC sin_a))
+      (Floating.cos a, C.scale (C.Num.neg sin_a))
     in D cos'
   
   let expC =
@@ -975,9 +975,9 @@ end
 
   let invC =
     let inv' a = 
-      let inv_a = Floating.inv a in
-      let sqr_inv_a = M.mulC (inv_a, inv_a) in 
-      (inv_a, C.scale (M.negC sqr_inv_a))
+      let inv_a = Floating.inv a in 
+      let sqr_inv_a = C.Num.mul inv_a inv_a in  
+      (inv_a, C.scale (C.Num.neg sqr_inv_a))
     in D inv'
 
 end
