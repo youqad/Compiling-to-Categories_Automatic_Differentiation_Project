@@ -68,10 +68,21 @@ let ( === ) f g x =
 let equal_float x y =
   x = y || (abs_float (x -. y) /. min x y < epsilon_float)
 
+let equal_float' x y =
+  x = y || (abs_float (x -. y) /. min x y < 0.000000001)
+
 let ( =^= ) f df x =
   let dfx = dapply (f, x) epsilon in
   let dfx' = df x in
   let result = equal_float dfx dfx'  in
+  if not result then
+    notice (Printf.sprintf "Failure on %f: %f <> %f" x dfx dfx');
+  result
+
+let ( =^^= ) f df x =
+  let dfx = dapply (f, x) epsilon in
+  let dfx' = df x in
+  let result = equal_float' dfx dfx'  in
   if not result then
     notice (Printf.sprintf "Failure on %f: %f <> %f" x dfx dfx');
   result
@@ -81,7 +92,14 @@ let ( @@ ) eq some_values =
 
 let some_floats = [0.; -1.; 1.; 33.; 100.; 10000.]
 
+let some_floats_sigmoid = [0.; -1.; 1.; 0.5; 0.3; 0.7; 0.8; 0.1; -0.4]
+
+
 let some_pairs = [(0., 0.); (1., 1.)]
+
+let sigmoid x dx =
+  let s x = 1. /. (1. +. exp (-.x)) in
+  dx *. s x *. (1. -. s x)
 
 let test () =
 
@@ -143,4 +161,17 @@ let test () =
           ((1., 0.), (epsilon, 0.));
           ((1., 0.), (0., epsilon))
         ]
-  )
+  );
+  check "Derivative of exp(-.) + 1" (fun () ->
+      (** D (exp(-.) + 1) = *)
+      (      addC *** pair (expC ** negC) (const 1.) **** dup 
+              =^= fun x -> -. exp (-. x) *. epsilon)
+      @@ some_floats);
+
+  check "Derivative of Sigmoid: inv(exp(-.) + 1)" (fun () ->
+  (** D (exp(-.) + 1) = *)
+  (      invC ** (addC *** pair (expC ** negC) (const 1.) **** dup) 
+          =^^= fun x -> sigmoid x epsilon)
+  @@ some_floats_sigmoid);
+  
+

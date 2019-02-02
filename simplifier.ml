@@ -61,9 +61,8 @@ let rec flattened_from_combinator : Target.t -> seq flattened_composition = func
       | App (Compose (oka, okb, okc), comb1) -> 
         let Seq (ok1_in, ok1_out, seq1) = flattened_from_combinator comb1 in
         let Seq (ok2_in, ok2_out, seq2) = flattened_from_combinator comb2 in
-        assert (oka = ok2_in); 
+        assert (oka = ok2_in); assert (okc = ok1_out);
         assert (okb = ok1_in && okb = ok2_out); 
-        assert (okc = ok1_out);
         Seq (oka, okc, seq1 @ seq2)
       | App (Fork (oka, okc, okd), comb1) -> 
         let Seq (ok1_in, ok1_out, _) as s1 = flattened_from_combinator comb1 in
@@ -133,14 +132,12 @@ let rec combinator_from_flattened : type a. a flattened_composition -> Target.t 
     | Curry (oka, okb, okc, seq) -> 
       let okseq_in, okseq_out = get_oks seq in
       let seq_comb = combinator_from_flattened seq in
-      assert (okseq_in = OkPair(oka, okb)); 
-      assert (okseq_out = okc);
+      assert (okseq_in = OkPair(oka, okb)); assert (okseq_out = okc);
       Curry (oka, okb, okc) ++ seq_comb
     | UnCurry (oka, okb, okc, seq) -> 
       let okseq_in, okseq_out = get_oks seq in
       let seq_comb = combinator_from_flattened seq in
-      assert (okseq_in = oka); 
-      assert (okseq_out = OkArrow(okb, okc));
+      assert (okseq_in = oka); assert (okseq_out = OkArrow(okb, okc));
       UnCurry (oka, okb, okc) ++ seq_comb
     )
 

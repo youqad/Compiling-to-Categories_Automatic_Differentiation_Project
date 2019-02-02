@@ -841,7 +841,7 @@ end
     linearD (LambdaCat.it ()) (C.it (snd oka))
 
   let unit_arrow (type a) (oka : a ok) x : (unit, a) k =
-    linearD (LambdaCat.unit_arrow () x) (C.unit_arrow (snd oka) x)
+    linearD (LambdaCat.unit_arrow () x) (C.ti (snd oka))
 
    let ok_unit =
      ((module AdditiveUnit : Additive with type t = unit), C.ok_unit)

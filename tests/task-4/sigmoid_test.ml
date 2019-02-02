@@ -16,6 +16,4 @@ let ( =?= ) x y =
   abs_float (x -. y) < epsilon_float
 
 let tests =
-  print_float (dsigmoid 0. 0.); print_newline (); 
-  print_float (dsigmoid_ref 0. 0.); 
   assert (dsigmoid x dx =?= dsigmoid_ref x dx)
