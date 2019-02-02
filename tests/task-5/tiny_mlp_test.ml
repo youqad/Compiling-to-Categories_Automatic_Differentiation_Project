@@ -26,9 +26,10 @@ let eval_net net training_set =
 
 (** [train training_set] returns a neural network trained for the
     [training_set]. *)
-let train : training_set -> net = fun training_set ->
-  let learn_rates = (0.1, 0.1) (** learning rates *) in
+let train : ?number_steps:bool -> ?learn_rates:float*float -> training_set -> net = 
+  fun ?(number_steps = false) ?(learn_rates = (0.1, 0.1)) (** learning rates *) training_set ->
   let net = ref (make_net 0. 0.) in
+  let nb_steps = ref 0 in
   let open DiffCat in 
   while eval_net !net training_set >= acceptable_error do 
     (
@@ -38,14 +39,16 @@ let train : training_set -> net = fun training_set ->
       let dwyu = epsilon_dapply (Diff.error) 
       ((input, !net), expectation) (((0., 0.), (0., snd learn_rates)), 0.) in 
       net := update_net !net (-.dwxu) (-.dwyu)
-      ) training_set
+      ) training_set;
+      if number_steps then incr nb_steps;
     ) done;
+  if number_steps then Printf.printf "Number of steps: %d\n" !nb_steps;
   !net
 
 
 let test =
   let training_set = [ (0., 1.), 0.; (1., 0.), 1. ] in
-  let trained_net = train training_set in
+  let trained_net = train training_set ~number_steps:true in
   assert (eval_net trained_net training_set < acceptable_error);
   Printf.printf "Everything went well! 
-  Here is the resulting MLP: (%f, %f)" (fst trained_net) (snd trained_net)
+  Here is the resulting MLP: (%f, %f)\n" (fst trained_net) (snd trained_net)
