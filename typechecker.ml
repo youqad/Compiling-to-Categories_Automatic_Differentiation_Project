@@ -61,7 +61,7 @@ let find_exn id contxt pos msg = match IdMap.find id contxt with
 let check_program (source : program_with_locations) : program_with_locations =
    let msg_in_which_term toplevel_term' = match toplevel_term' with
    | None -> ""
-   | Some t' -> "Inside \n" ^ (string_of_term' (Position.value t')) ^ "\n :: " in
+   | Some t' -> Printf.sprintf "Inside \n %s \n ::" (string_of_term' (Position.value t')) in
    let err_msg ?toplevel_term' t' typ_t' str_typ_expected =  
       msg_in_which_term toplevel_term' ^ start_err_msg 
       ^ (string_of_term' (Position.value t'))
@@ -105,7 +105,7 @@ let check_program (source : program_with_locations) : program_with_locations =
             match typ_a with
             | TyPair (a_left, _) -> a_left
             | _ ->
-               let str_expected_type = "(" ^ string_of_type typ_a ^ ") * 'a" in
+               let str_expected_type = Printf.sprintf "(%s) * 'a" (string_of_type typ_a) in
                type_err (err_msg ?toplevel_term' a typ_a str_expected_type)
          )
       | Snd a -> 
@@ -114,7 +114,7 @@ let check_program (source : program_with_locations) : program_with_locations =
             match typ_a with
             | TyPair (_, a_right) -> a_right
             | _ -> 
-               let str_expected_type = "'a * (" ^ string_of_type typ_a ^ ")" in
+               let str_expected_type = Printf.sprintf "'a * (%s)" (string_of_type typ_a) in
                type_err (err_msg ?toplevel_term' a typ_a str_expected_type)
          )
    in let check_type ?toplevel_term' contxt (bt': (binding Position.located * term' Position.located)) =
@@ -157,8 +157,8 @@ let eta_expanse : program_with_locations -> program_with_locations =
      | TyArrow _ -> b', eta_expanse_term' t' (snd (Position.value b'))
      | _ -> let Id b'_str = b'_id in 
          type_error (Position.position b') 
-            ("Term " ^ b'_str ^ " of type " ^ (string_of_type b'_typ) 
-            ^ " forbidden: only functions are allowed at toplevel")
+            (Printf.sprintf "Term %s of type %s forbidden: 
+            only functions are allowed at toplevel" b'_str (string_of_type b'_typ))
      ) 
 
 let program : program_with_locations -> program_with_locations = fun source ->

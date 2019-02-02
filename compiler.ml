@@ -50,7 +50,7 @@ let rec get_combinator_with_context : type a. a ok_input_tree -> term -> (Target
       | combinator, ok -> (
          match ok with
          | OkArrow(ok_in, ok_out) -> constFun combinator ok_in ok_out, ok
-         | _ -> failwith ("Term " ^ string_of_term term ^ " should have an arrow type")
+         | _ -> failwith (Printf.sprintf "Term %s should have an arrow type" (string_of_term term))
       )
       | exception Not_found -> 
          let combinator, ok_x = get_variable_from_input_tree ok_input_tree id_x in
@@ -76,9 +76,10 @@ let rec get_combinator_with_context : type a. a ok_input_tree -> term -> (Target
          match ok_a with 
          | OkArrow (ok_in, ok_out) -> ok_in, ok_out
          | _ -> 
-            failwith ("Typing error: term a = " ^ string_of_term a ^ " (ok_a = " ^  string_of_ok ok_a ^ ") 
-            which doesn't have application type is applied to b = " 
-            ^ string_of_ok ok_b ^ " (ok_b = " ^ string_of_ok ok_b ^ ")")
+            failwith (Printf.sprintf "Typing error: term a = %s (ok_a = %s) 
+            which doesn't have application type is applied to 
+            b = %s (ok_b = %s)" 
+            (string_of_term a) (string_of_ok ok_a) (string_of_term b) (string_of_ok ok_b))
          ) in
       assert (ok_a_in = ok_b);
       (Compose (ok_input, OkPair (ok_a, ok_b), ok_a_out) ++ Apply (ok_a_in, ok_a_out)) ++ ((Fork (ok_input, ok_a, ok_b) ++ comb_a) ++ comb_b), 
@@ -100,8 +101,8 @@ let rec get_combinator_with_context : type a. a ok_input_tree -> term -> (Target
          match ok_a with 
          | OkPair (ok_left, ok_right) -> ok_left, ok_right
          | _ -> 
-            failwith ("Typing error: destructor Fst applied to the term a = " 
-            ^ string_of_term a ^ " (ok_a = " ^  string_of_ok ok_a ^ ") which doesn't have pair type")
+            failwith (Printf.sprintf "Typing error: destructor Fst applied to the term a = %s (ok_a = %s) which doesn't have pair type" 
+            (string_of_term a) (string_of_ok ok_a))
          ) in 
       (Compose (ok_input, ok_a, ok_a_left) ++ Exl (ok_a_left, ok_a_right)) ++ comb_a, 
       ok_a_left 
@@ -111,8 +112,8 @@ let rec get_combinator_with_context : type a. a ok_input_tree -> term -> (Target
          match ok_a with 
          | OkPair (ok_left, ok_right) -> ok_left, ok_right        
          | _ -> 
-            failwith ("Typing error: destructor Snd applied to the term a = " 
-            ^ string_of_term a ^ " (ok_a = " ^  string_of_ok ok_a ^ ") which doesn't have pair type")
+            failwith (Printf.sprintf "Typing error: destructor Snd applied to the term a = %s (ok_a = %s) which doesn't have pair type" 
+            (string_of_term a) (string_of_ok ok_a))
          ) in 
       (Compose (ok_input, ok_a, ok_a_right) ++ Exr (ok_a_left, ok_a_right)) ++ comb_a,
       ok_a_right
@@ -134,6 +135,6 @@ let source_to_categories : Source.program -> Target.program =
             let combinator, _ = get_combinator_with_context (Leaf (id_x, ok_x)) u previous_terms_map in
                (b, combinator) :: target_list, 
                IdMap.add id_b (combinator, ok_t) previous_terms_map
-         | _ -> failwith ("Error: term " ^ string_of_term t ^ " not  in eta-expanded form.")
+         | _ -> failwith (Printf.sprintf "Error: term %s not  in eta-expanded form." (string_of_term t))
       )
       ([], IdMap.empty) source))

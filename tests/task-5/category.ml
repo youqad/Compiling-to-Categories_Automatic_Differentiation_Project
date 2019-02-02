@@ -136,7 +136,7 @@ end
 
    An initial (or universal or coterminal) object [unit] of a category
    is such that for every object ['a] there is exactly one morphism
-   [it] from [t] to ['a].
+   [ti] from [t] to ['a].
 
 *)
 module type HasInitialObject = sig
@@ -147,9 +147,8 @@ end
 
 (**
 
-   A terminal (or final) object [unit] of a category is such that for
-   every object ['a] there is exactly one morphism [ti] from ['a] to
-   [t].
+   A terminal object [unit] of a category is such that for every
+   object ['a] there is exactly one morphism [it] from ['a] to [t].
 
 *)
 module type HasTerminalObject = sig
@@ -298,95 +297,29 @@ module LambdaCat
   (*             Then, run `make -C tests/task-1`.   *)
   (*-------------------------------------------------*)
 
-  let id () =
-    (* <corrige> *)
-    fun x -> x
-    (* </corrige> *)
-    (* <sujet>
-    failwith "Student! This is your job!"
-    </sujet> *)
+  let id () = fun a -> a
 
-  let compose () () () f g =
-    (* <corrige> *)
-    fun x -> f (g x)
-    (* </corrige> *)
-    (* <sujet>
-    failwith "Student! This is your job!"
-    </sujet> *)
+  let compose () () () f g = fun a -> f (g a)
 
-  let pair () () () () f g =
-    (* <corrige> *)
-    fun (x, y) -> (f x, g y)
-    (* </corrige> *)
-    (* <sujet>
-    failwith "Student! This is your job!"
-    </sujet> *)
+  let pair () () () () f g = fun (a, b) -> (f a, g b)
 
-  let exl () () (x, y) =
-    (* <corrige> *)
-    x
-    (* </corrige> *)
-    (* <sujet>
-    failwith "Student! This is your job!"
-    </sujet> *)
+  let exl () () (x, y) = x
 
-  let exr () () (x, y) =
-    (* <corrige> *)
-    y
-    (* </corrige> *)
-    (* <sujet>
-    failwith "Student! This is your job!"
-    </sujet> *)
+  let exr () () (x, y) = y
 
-  let dup () x =
-    (* <corrige> *)
-    (x, x)
-    (* </corrige> *)
-    (* <sujet>
-    failwith "Student! This is your job!"
-    </sujet> *)
+  let dup () x = (x, x)
 
-  let apply () () (f, x) =
-    (* <corrige> *)
-    f x
-    (* </corrige> *)
-    (* <sujet>
-    failwith "Student! This is your job!"
-    </sujet> *)
+  let apply () () (f, x) = f x
 
-  let curry () () () f =
-    (* <corrige> *)
-    fun x y -> f (x, y)
-    (* </corrige> *)
-    (* <sujet>
-    failwith "Student! This is your job!"
-    </sujet> *)
+  let curry () () () f = fun a b -> f (a, b)
 
-  let uncurry () () () f =
-    (* <corrige> *)
-    fun (x, y) -> f x y
-    (* </corrige> *)
-    (* <sujet>
-    failwith "Student! This is your job!"
-    </sujet> *)
+  let uncurry () () () f = fun (a, b) -> f a b
 
   (** STLC has a terminal object. *)
-  let it () x =
-    (* <corrige> *)
-    ()
-    (* </corrige> *)
-    (* <sujet>
-    failwith "Student! This is your job!"
-    </sujet> *)
+  let it () x = ()
 
   (** STLC has constant arrows. *)
-  let unit_arrow () x =
-    (* <corrige> *)
-    fun () -> x
-    (* </corrige> *)
-    (* <sujet>
-    failwith "Student! This is your job!"
-    </sujet> *)
+  let unit_arrow () x = fun () -> x
 
   let ok_unit = ()
 
@@ -507,7 +440,7 @@ module AdditivePair (AddA : Additive) (AddB : Additive)
 end
 
 (**
-    If A and B are additive then A -> B is additive too.
+    If B is additive then A -> B is additive too.
 
  *)
 module AdditiveLambda (A : sig type t end) (AddB : Additive)
@@ -581,155 +514,62 @@ end
   (*-------------------------------------------------*)
 
   let ok_pair (type a b) (oka : a ok) (okb : b ok) : (a * b) ok =
-    (* <corrige> *)
-    let module AddA = (val oka : Additive with type t = a) in
-    let module AddB = (val okb : Additive with type t = b) in
-    (module AdditivePair (AddA) (AddB))
-    (* </corrige> *)
-    (* <sujet>
-    failwith "Student! This is your job!"
-    </sujet> *)
+    (module AdditivePair (val oka) (val okb))
 
-  let id oka =
-    (* <corrige> *)
-    AdditiveFun (fun x -> x)
-    (* </corrige> *)
-    (* <sujet>
-    failwith "Student! This is your job!"
-    </sujet> *)
+  let id oka = AdditiveFun (fun a -> a)
 
   let compose oka okb okc (AdditiveFun f) (AdditiveFun g) =
-    (* <corrige> *)
-    AdditiveFun (fun x -> f (g x))
-    (* </corrige> *)
-    (* <sujet>
-    failwith "Student! This is your job!"
-    </sujet> *)
+    AdditiveFun (f ** g)
 
   let pair oka okb okc okd (AdditiveFun f) (AdditiveFun g) =
-    (* <corrige> *)
-    AdditiveFun (fun (x, y) -> (f x, g y))
-    (* </corrige> *)
-    (* <sujet>
-    failwith "Student! This is your job!"
-    </sujet> *)
+    AdditiveFun (LambdaCat.pair () () () () f g)
 
   let exl oka okb =
-    (* <corrige> *)
-    AdditiveFun fst
-    (* </corrige> *)
-    (* <sujet>
-    failwith "Student! This is your job!"
-    </sujet> *)
+    AdditiveFun (LambdaCat.exl () ())
 
   let exr oka okb =
-    (* <corrige> *)
-    AdditiveFun snd
-    (* </corrige> *)
-    (* <sujet>
-    failwith "Student! This is your job!"
-    </sujet> *)
+    AdditiveFun (LambdaCat.exr () ())
 
   let dup oka =
-    (* <corrige> *)
-    AdditiveFun (fun x -> (x, x))
-    (* </corrige> *)
-    (* <sujet>
-    failwith "Student! This is your job!"
-    </sujet> *)
+    AdditiveFun (LambdaCat.dup ())
 
   let inl (type a b) (oka : a ok) (okb : b ok) =
-    (* <corrige> *)
     AdditiveFun (inlF okb)
-    (* </corrige> *)
-    (* <sujet>
-    failwith "Student! This is your job!"
-    </sujet> *)
 
   let inr (type a b) (oka : a ok) (okb : b ok) =
-    (* <corrige> *)
     AdditiveFun (inrF oka)
-    (* </corrige> *)
-    (* <sujet>
-    failwith "Student! This is your job!"
-    </sujet> *)
 
   let jam (type a) (oka : a ok) =
-    (* <corrige> *)
     AdditiveFun (jamF oka)
-    (* </corrige> *)
-    (* <sujet>
-    failwith "Student! This is your job!"
-    </sujet> *)
 
   let ti (type a) (module AddA : Additive with type t = a) =
-    (* <corrige> *)
     AdditiveFun (fun () -> AddA.zero)
-    (* </corrige> *)
-    (* <sujet>
-    failwith "Student! This is your job!"
-    </sujet> *)
 
   let it (type a) (module AddA : Additive with type t = a) =
-    (* <corrige> *)
-    AdditiveFun (fun _ -> ())
-    (* </corrige> *)
-    (* <sujet>
-    failwith "Student! This is your job!"
-    </sujet> *)
+    AdditiveFun (LambdaCat.it ())
 
   let unit_arrow (type a) (module AddA : Additive with type t = a) x =
-    (* <corrige> *)
-    AdditiveFun (fun () -> x)
-    (* </corrige> *)
-    (* <sujet>
-    failwith "Student! This is your job!"
-    </sujet> *)
+    AdditiveFun (LambdaCat.unit_arrow () x)
 
-  let ok_unit : unit ok =
-    (* <corrige> *)
-    (module AdditiveUnit)
-    (* </corrige> *)
-    (* <sujet>
-    failwith "Student! This is your job!"
-    </sujet> *)
+  let ok_unit : unit ok = (module AdditiveUnit)
 
   let apply oka okb =
-    (* <corrige> *)
-    AdditiveFun (fun (f, x) -> f x)
-    (* </corrige> *)
-    (* <sujet>
-    failwith "Student! This is your job!"
-    </sujet> *)
+    AdditiveFun (LambdaCat.apply () ())
 
   let curry oka okb okc (AdditiveFun f) =
-    (* <corrige> *)
-    AdditiveFun (fun x -> fun y -> f (x, y))
-    (* </corrige> *)
-    (* <sujet>
-    failwith "Student! This is your job!"
-    </sujet> *)
+    AdditiveFun (LambdaCat.curry () () () f)
 
   let uncurry oka okb okc (AdditiveFun f) =
-    (* <corrige> *)
-    AdditiveFun (fun (x, y) -> f x y)
-    (* </corrige> *)
-    (* <sujet>
-    failwith "Student! This is your job!"
-    </sujet> *)
+    AdditiveFun (LambdaCat.uncurry () () () f)
 
-  let ok_arrow (type a b) oka okb =
-    (* <corrige> *)
-    let module A = struct type t = a end in
-    let module AddB = (val okb : Additive with type t = b) in
-    (module AdditiveLambda (A) (AddB) : Additive with type t = a -> b)
-    (* </corrige> *)
-    (* <sujet>
-    failwith "Student! This is your job!"
-    </sujet> *)
+    let ok_arrow (type a b) (oka : a ok) (okb : b ok) = 
+      let module A = (val oka) in 
+      let module B = (val okb) in
+      (module AdditiveLambda(A)(B) : Additive with type t = a -> b)
 
 end
 
+(* (module AdditiveUnit : Additive with type t = unit) *)
 (**
 
    Since we will differentiate numerical function, we need
@@ -952,121 +792,56 @@ end
   (*-------------------------------------------------*)
 
   let ok_pair (type a b) (oka : a ok) (okb : b ok) : (a * b) ok =
-    (* <corrige> *)
-    let module AddA = (val fst oka : Additive with type t = a) in
-    let module AddB = (val fst okb : Additive with type t = b) in
-    ((module AdditivePair (AddA) (AddB)), C.ok_pair (snd oka) (snd okb))
-    (* </corrige> *)
-    (* <sujet>
-    failwith "Student! This is your job!"
-    </sujet> *)
+    ((module AdditivePair (val (fst oka)) (val (fst okb))),
+    C.ok_pair (snd oka) (snd okb))
 
-  let id oka =
-    (* <corrige> *)
-    linearD (fun x -> x) (C.id (snd oka))
-    (* </corrige> *)
-    (* <sujet>
-    failwith "Student! This is your job!"
-    </sujet> *)
+  let id oka = linearD (LambdaCat.id ()) (C.id (snd oka))
 
   let compose oka okb okc (D g) (D f) =
-    (* <corrige> *)
-    D (fun x ->
-        let y, f' = f x in
-        let z, g' = g y in
-        z, C.compose (snd oka) (snd okb) (snd okc) g' f')
-    (* </corrige> *)
-    (* <sujet>
-    failwith "Student! This is your job!"
-    </sujet> *)
+    let gf a = 
+      let b, f' = f a in
+      let c, g' = g b in
+      (c, C.compose (snd oka) (snd okb) (snd okc) g' f') 
+    in D gf
+         
 
   let pair
     : type a b c d.
       a ok -> b ok -> c ok -> d ok ->
       (a, c) k -> (b, d) k -> (a * b, c * d) k
     = fun oka okb okc okd (D f) (D g) ->
-    (* <corrige> *)
-    D (fun (a, b) ->
-        let c, f' = f a in
-        let d, g' = g b in
-        ((c, d),
-         C.pair (snd oka) (snd okb) (snd okc) (snd okd) f' g'))
-    (* </corrige> *)
-    (* <sujet>
-    failwith "Student! This is your job!"
-    </sujet> *)
-
-  let exl oka okb =
-    (* <corrige> *)
+    let fxg (a, b) = 
+      let c, f' = f a in
+      let d, g' = g b in
+      ((c, d), C.pair (snd oka) (snd okb) (snd okc) (snd okd) f' g') 
+    in D fxg
+  
+  let exl oka okb = 
     linearD (LambdaCat.exl () ()) (C.exl (snd oka) (snd okb))
-    (* </corrige> *)
-    (* <sujet>
-    failwith "Student! This is your job!"
-    </sujet> *)
 
   let dup oka =
-    (* <corrige> *)
     linearD (LambdaCat.dup ()) (C.dup (snd oka))
-    (* </corrige> *)
-    (* <sujet>
-    failwith "Student! This is your job!"
-    </sujet> *)
 
   let exr oka okb =
-    (* <corrige> *)
     linearD (LambdaCat.exr () ()) (C.exr (snd oka) (snd okb))
-    (* </corrige> *)
-    (* <sujet>
-    failwith "Student! This is your job!"
-    </sujet> *)
 
   let inl oka okb =
-    (* <corrige> *)
     linearD (inlF (fst okb)) (C.inl (snd oka) (snd okb))
-    (* </corrige> *)
-    (* <sujet>
-    failwith "Student! This is your job!"
-    </sujet> *)
 
   let inr oka okb =
-    (* <corrige> *)
     linearD (inrF (fst oka)) (C.inr (snd oka) (snd okb))
-    (* </corrige> *)
-    (* <sujet>
-    failwith "Student! This is your job!"
-    </sujet> *)
 
   let jam oka =
-    (* <corrige> *)
     linearD (jamF (fst oka)) (C.jam (snd oka))
-    (* </corrige> *)
-    (* <sujet>
-    failwith "Student! This is your job!"
-    </sujet> *)
 
   let ti (type a) (((module AddA), coka) : a ok) : (unit, a) k =
-    (* <corrige> *)
-    D (fun () -> (AddA.zero, C.ti coka))
-    (* </corrige> *)
-    (* <sujet>
-    failwith "Student! This is your job!"
-    </sujet> *)
+    linearD (fun () -> AddA.zero) (C.ti coka)
 
   let it (type a) (oka : a ok) : (a, unit) k =
-    (* <corrige> *)
-    D (fun _ -> ((), C.it (snd oka)))
-    (* </corrige> *)
-    (* <sujet>
-    failwith "Student! This is your job!"
-    </sujet> *)
+    linearD (LambdaCat.it ()) (C.it (snd oka))
 
   let unit_arrow (type a) (oka : a ok) x : (unit, a) k =
-    (* <corrige> *)
-    D (fun () -> (x, C.ti (snd oka)))
-    (* </corrige> *)
-    (* <sujet>
-    failwith "Student! This is your job!"
-    </sujet> *)
+    linearD (LambdaCat.unit_arrow () x) (C.ti (snd oka))
 
    let ok_unit =
      ((module AdditiveUnit : Additive with type t = unit), C.ok_unit)
@@ -1158,84 +933,52 @@ end
 
   include DiffCat (C)
 
-  (* <corrige> *)
-  module AFD = CoCartesianCatDerivedOperations (C)
-
-  module SAF = C
-
-  module ANC  = C
-
-  module LNC  = LambdaNumCatFromNum (C.Num)
-  (* </corrige> *)
 
   (*-------------------------------------------------*)
   (* Question 4: Complete the following definitions. *)
   (*             Then, run `make -C tests/task-1`.   *)
   (*-------------------------------------------------*)
 
+  module M = LambdaNumCatFromNum (C.Num)
+  module CoC = CoCartesianCatDerivedOperations (C)
+
   let todo = D (fun _ -> failwith "Students! This is your job!")
 
-  let negC =
-    (* <corrige> *)
-    linearD LNC.negC ANC.negC
-    (* </corrige> *)
-    (* <sujet>
-    todo
-    </sujet> *)
+  let negC = 
+    linearD (C.Num.neg) (C.negC)
 
   let addC =
-    (* <corrige> *)
-    linearD LNC.addC ANC.addC
-    (* </corrige> *)
-    (* <sujet>
-    todo
-    </sujet> *)
+    linearD (M.addC) (C.addC)
 
-  let mulC =
-    (* <corrige> *)
-    D (fun (a, b) ->
-          (C.Num.mul a b,
-           AFD.join C.ok_t C.ok_t C.ok_t (SAF.scale b, SAF.scale a)))
-    (* </corrige> *)
-    (* <sujet>
-    todo
-    </sujet> *)
+  let mulC =    
+    let mul' (a, b) = 
+      let scale_ba = C.scale b, C.scale a in 
+      (C.Num.mul a b, CoC.join C.ok_t C.ok_t C.ok_t scale_ba)
+    in D mul'
 
-  let sinC =
-    (* <corrige> *)
-    D (fun a -> (Floating.sin a, SAF.scale (Floating.cos a)))
-    (* </corrige> *)
-    (* <sujet>
-    todo
-    </sujet> *)
+  let sinC = 
+    let sin' a = 
+      (Floating.sin a, C.scale (Floating.cos a))
+    in D sin'
 
   let cosC =
-    (* <corrige> *)
-    D (fun a -> (Floating.cos a, SAF.scale (C.Num.neg (Floating.sin a))))
-    (* </corrige> *)
-    (* <sujet>
-    todo
-    </sujet> *)
-
+    let cos' a = 
+      let sin_a = Floating.sin a in
+      (Floating.cos a, C.scale (C.Num.neg sin_a))
+    in D cos'
+  
   let expC =
-    (* <corrige> *)
-    D (fun a ->
-        let e = Floating.exp a in
-        (e, SAF.scale e))
-    (* </corrige> *)
-    (* <sujet>
-    todo
-    </sujet> *)
+    let exp' a = 
+      let e = Floating.exp a in
+      (e, C.scale e)
+    in D exp'
 
   let invC =
-    (* <corrige> *)
-    D (fun a ->
-        (Floating.inv a,
-         SAF.scale (Floating.(C.Num.neg (inv (C.Num.mul a a))))))
-    (* </corrige> *)
-    (* <sujet>
-    todo
-    </sujet> *)
+    let inv' a = 
+      let inv_a = Floating.inv a in 
+      let sqr_inv_a = C.Num.mul inv_a inv_a in  
+      (inv_a, C.scale (C.Num.neg sqr_inv_a))
+    in D inv'
 
 end
 
@@ -1306,126 +1049,44 @@ end
   (*             Then, run `make -C tests/task-1`.   *)
   (*-------------------------------------------------*)
 
+
   let id oka =
-    (* <corrige> *)
-    Cont (LambdaCat.id ())
-    (* </corrige> *)
-    (* <sujet>
-    failwith "Students! This is your job!"
-    </sujet> *)
+    cont oka oka (C.id oka)
 
   let compose oka okb okc (Cont g) (Cont f) =
-    (* <corrige> *)
-    Cont (LambdaCat.compose () () () f g)
-    (* </corrige> *)
-    (* <sujet>
-    failwith "Students! This is your job!"
-    </sujet> *)
+    Cont (f ** g)
 
   let pair oka okb okc okd (Cont f) (Cont g) =
-    (* <corrige> *)
-    let t1 = AFD.unjoin R.okr okc okd in
-    let t2 = LambdaCat.pair () () () () f g in
-    let t3 = t2 ** t1 in
-    let t4 = AFD.join R.okr oka okb in
-    let t5 = t4 ** t3 in
-    Cont t5
-    (* </corrige> *)
-    (* <sujet>
-    failwith "Students! This is your job!"
-    </sujet> *)
+    Cont (AFD.join R.okr oka okb ** LambdaCat.pair () () () () f g ** AFD.unjoin R.okr okc okd)
 
   let exl (type a b) (oka : a C.ok) (okb : b C.ok) : (a * b, a) k =
-    (* <corrige> *)
-    let zero : (b, R.t) C.k =
-      C.compose okb C.ok_unit R.okr (C.ti R.okr) (C.it okb)
-    in
-    let inl : (a, R.t) C.k -> (a, R.t) C.k * (b, R.t) C.k =
-      fun h -> (h, zero)
-    in
-    Cont ((AFD.join R.okr oka okb) ** inl)
-    (* </corrige> *)
-    (* <sujet>
-    failwith "Students! This is your job!"
-    </sujet> *)
+    cont (ok_pair oka okb) oka (C.exl oka okb)
 
   let exr (type a b) (oka : a C.ok) (okb : b C.ok) : (a * b, b) k =
-    (* <corrige> *)
-    let zero : (a, R.t) C.k =
-      C.compose oka C.ok_unit R.okr (C.ti R.okr) (C.it oka)
-    in
-    let inr : (b, R.t) C.k -> (a, R.t) C.k * (b, R.t) C.k =
-      fun h -> (zero, h)
-    in
-    Cont ((AFD.join R.okr oka okb) ** inr)
-    (* </corrige> *)
-    (* <sujet>
-    failwith "Students! This is your job!"
-    </sujet> *)
+    cont (ok_pair oka okb) okb (C.exr oka okb)
 
   let dup (type a) (oka : a C.ok) : (a, a * a) k =
-    (* <corrige> *)
-    let jam : (a, R.t) C.k * (a, R.t) C.k -> (a, R.t) C.k =
-      fun (f, g) ->
-      C.compose oka (C.ok_pair oka oka) R.okr
-        (AFD.join R.okr oka oka (f, g))
-        (C.dup oka)
-    in
-    Cont (jam ** (AFD.unjoin R.okr oka oka))
-    (* </corrige> *)
-    (* <sujet>
-    failwith "Students! This is your job!"
-    </sujet> *)
+    cont oka (ok_pair oka oka) (C.dup oka)
 
   let inl (type a b) (oka : a C.ok) (okb : b C.ok) : (a, a * b) k =
-    (* <corrige> *)
-    Cont ((LambdaCat.exl () ()) ** (AFD.unjoin R.okr oka okb))
-    (* </corrige> *)
-    (* <sujet>
-    failwith "Students! This is your job!"
-    </sujet> *)
+    cont oka (ok_pair oka okb) (C.inl oka okb)
 
   let inr (type a b) (oka : a C.ok) (okb : b C.ok) : (b, a * b) k =
-    (* <corrige> *)
-    Cont ((LambdaCat.exr () ()) ** (AFD.unjoin R.okr oka okb))
-    (* </corrige> *)
-    (* <sujet>
-    failwith "Students! This is your job!"
-    </sujet> *)
+    cont okb (ok_pair oka okb) (C.inr oka okb)
 
   let jam (type a) (oka : a C.ok) : (a * a, a) k =
-    (* <corrige> *)
-    Cont ((AFD.join R.okr oka oka) ** (LambdaCat.dup ()))
-    (* </corrige> *)
-    (* <sujet>
-    failwith "Students! This is your job!"
-    </sujet> *)
+    cont (ok_pair oka oka) oka (C.jam oka)
 
   let ok_unit = C.ok_unit
 
   let ti oka =
-    (* <corrige> *)
-    Cont (fun f -> C.ti R.okr)
-    (* </corrige> *)
-    (* <sujet>
-    failwith "Students! This is your job!"
-    </sujet> *)
+    cont ok_unit oka (C.ti oka)
 
   let it oka =
-    (* <corrige> *)
-    Cont (fun f -> C.compose oka ok_unit R.okr f (C.it oka))
-    (* </corrige> *)
-    (* <sujet>
-    failwith "Students! This is your job!"
-    </sujet> *)
+    cont oka ok_unit (C.it oka)
 
   let unit_arrow (type a) (oka : a ok) (x : a) : (unit, a) k =
-    (* <corrige> *)
-    Cont (fun f -> C.compose ok_unit oka R.okr f (C.unit_arrow oka x))
-    (* </corrige> *)
-    (* <sujet>
-    failwith "Students! This is your job!"
-    </sujet> *)
+    cont ok_unit oka (C.unit_arrow oka x)
 
 end
 
@@ -1456,12 +1117,7 @@ struct
   include ContinuationCategoryTransformer (C) (R)
   type t = C.t
   let scale s =
-    (* <corrige> *)
-    Cont (fun h -> C.compose C.ok_t C.ok_t R.okr h (C.scale s))
-    (* </corrige> *)
-    (* <sujet>
-    failwith "Students! This is your job!"
-    </sujet> *)
+    cont C.ok_t C.ok_t (C.scale s)
 end
 
 (**
