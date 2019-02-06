@@ -25,16 +25,18 @@ let ok_input_tree_get_ok : type a. a ok_input_tree -> ok =
    | Leaf (_, ok) -> ok
    | Node (_, ok, _) -> ok
 
+exception Variable_not_found
+
 let rec get_variable_from_input_tree : type a. a ok_input_tree -> identifier -> t * ok = 
    fun ok_input id_x -> match ok_input with
-   | Leaf (id, ok) -> Identity ok, ok
+   | Leaf (id, ok) when id_x = id -> Identity ok, ok
    | Node (Leaf (id1, ok1), _, Leaf (id2, ok2)) when id_x = id1 -> Exl (ok1, ok2), ok1 
    | Node (Leaf (id1, ok1), _, Leaf (id2, ok2)) when id_x = id2 -> Exr (ok1, ok2), ok2 
    | Node (Node (_, ok1, _), _, Leaf (id2, ok2)) when id_x = id2 -> Exr (ok1, ok2), ok2
    | Node (Node (_, ok1, _) as left_tree, ok, Leaf (_, ok2)) -> 
       let combinator, ok_var = get_variable_from_input_tree left_tree id_x in
       (Compose (ok, ok1, ok_var) ++ combinator) ++ Exl (ok1, ok2), ok_var
-   | _ -> failwith "Variable not found in context."
+   | _ -> raise Variable_not_found
 
 
 let rec get_combinator_with_context : type a. a ok_input_tree -> term -> (Target.t * ok) IdMap.t -> Target.t * ok =
@@ -46,15 +48,17 @@ let rec get_combinator_with_context : type a. a ok_input_tree -> term -> (Target
    in
    match term with
    | Var (id_x) -> (
-      match IdMap.find id_x previous_terms_map with
-      | combinator, ok -> (
-         match ok with
-         | OkArrow(ok_in, ok_out) -> constFun combinator ok_in ok_out, ok
-         | _ -> failwith (Printf.sprintf "Term %s should have an arrow type" (string_of_term term))
+      match get_variable_from_input_tree ok_input_tree id_x with
+      | combinator, ok_x -> combinator, ok_x
+      | exception Variable_not_found -> (
+         match IdMap.find id_x previous_terms_map with
+         | combinator, ok -> (
+            match ok with
+            | OkArrow(ok_in, ok_out) -> constFun combinator ok_in ok_out, ok
+            | _ -> failwith (Printf.sprintf "Variable %s should have an arrow type" (string_of_term term))
+         )
+         | exception Not_found -> failwith (Printf.sprintf "Variable %s not found in context" (string_of_term term))
       )
-      | exception Not_found -> 
-         let combinator, ok_x = get_variable_from_input_tree ok_input_tree id_x in
-         combinator, ok_x
    )
    | Literal (Float _ as l) -> 
       let unit_arrow_combinator = UnitArrow OkFloat ++ Literal l in
@@ -118,8 +122,6 @@ let rec get_combinator_with_context : type a. a ok_input_tree -> term -> (Target
       (Compose (ok_input, ok_a, ok_a_right) ++ Exr (ok_a_left, ok_a_right)) ++ comb_a,
       ok_a_right
 
-(** existential_wrapper *)
-type wrapped_input = Wrap : _ ok_input_tree -> wrapped_input
   
 (** [source_to_categories translates a [source] in a [target] language
     made of categorical combinators. *)

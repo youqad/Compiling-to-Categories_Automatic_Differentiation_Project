@@ -497,9 +497,10 @@ module AdditiveFunctionsCat : sig
           with type ('a, 'b) k := ('a, 'b) k
           with type 'a ok := 'a ok
 
-  include CartesianClosedCat
+  (* include CartesianClosedCat
           with type ('a, 'b) k := ('a, 'b) k
-          with type 'a ok := 'a ok
+          with type 'a ok := 'a ok 
+  *)
 
 end
 = struct
@@ -552,7 +553,8 @@ end
     AdditiveFun (LambdaCat.unit_arrow () x)
 
   let ok_unit : unit ok = (module AdditiveUnit)
-
+  
+  (*
   let apply oka okb =
     AdditiveFun (LambdaCat.apply () ())
 
@@ -565,7 +567,7 @@ end
     let ok_arrow (type a b) (oka : a ok) (okb : b ok) = 
       let module A = (val oka) in 
       let module B = (val okb) in
-      (module AdditiveLambda(A)(B) : Additive with type t = a -> b)
+      (module AdditiveLambda(A)(B) : Additive with type t = a -> b) *)
 
 end
 
@@ -1051,7 +1053,7 @@ end
 
 
   let id oka =
-    cont oka oka (C.id oka)
+    Cont (LambdaCat.id ())
 
   let compose oka okb okc (Cont g) (Cont f) =
     Cont (f ** g)
