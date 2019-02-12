@@ -1057,32 +1057,82 @@ end
 
   let compose oka okb okc (Cont g) (Cont f) =
     Cont (f ** g)
-
+  
+  (** pair = Cont Φ
+      where 
+      r ≝ R.t, f: ('c, r) C.k ⟶ ('a, r) C.k, g: ('d, r) C.k ⟶ ('b, r) C.k,
+      Φ ≝ ('c * 'd, r) C.k ∋ h  ⟼ unjoin h = (h1: ('c, r) C.k, h2: ('d, r) C.k)
+                                ⟼ ((f Δ g) ∘ unjoin) h : ('a, r) C.k * ('b, r) C.k
+                                ⟼ join (((f Δ g) ∘ unjoin) h) : ('a * 'b, r) C.k
+  *)
   let pair oka okb okc okd (Cont f) (Cont g) =
     Cont (AFD.join R.okr oka okb ** LambdaCat.pair () () () () f g ** AFD.unjoin R.okr okc okd)
 
+  (** exl = Cont Φ
+      where 
+      r ≝ R.t,
+      Φ ≝ ('a, r) C.k ∋ h  ⟼  (h, C.ti ∘ C.it) : ('a, r) C.k * ('b, r) C.k
+                          ⟼ join ((h, C.ti ∘ C.it)) : ('a * 'b, r) C.k
+  *)
   let exl (type a b) (oka : a C.ok) (okb : b C.ok) : (a * b, a) k =
-    cont (ok_pair oka okb) oka (C.exl oka okb)
+    let morph_from_b_to_r = C.compose okb C.ok_unit R.okr (C.ti R.okr) (C.it okb) in 
+    Cont (AFD.join R.okr oka okb ** (fun h -> (h, morph_from_b_to_r)))
 
+  (** exr = Cont Φ
+      where 
+      r ≝ R.t,
+      Φ: ('b, r) C.k ∋ h  ⟼  (C.ti ∘ C.it, h) : ('a, r) C.k * ('b, r) C.k
+                          ⟼ join ((C.ti ∘ C.it, h)) : ('a * 'b, r) C.k
+  *)
   let exr (type a b) (oka : a C.ok) (okb : b C.ok) : (a * b, b) k =
-    cont (ok_pair oka okb) okb (C.exr oka okb)
+    let morph_from_a_to_r = C.compose oka C.ok_unit R.okr (C.ti R.okr) (C.it oka) in 
+    Cont (AFD.join R.okr oka okb ** (fun h -> (morph_from_a_to_r, h)))
 
+  (** dup = Cont Φ
+      where 
+      r ≝ R.t,
+      Φ ≝ ('a * 'a, r) C.k ∋ h  ⟼  unjoin h : ('a, r) C.k * ('a, r) C.k
+                                ⟼ jam (unjoin h) : ('a, r) C.k
+      and 
+      we have no choice but to define jam as something along the lines of 
+        jam (h1, h2) ≝ join (h1, h2) ∘ C.dup
+      which amounts (as join = unjoin^{-1}) to set
+      Φ ≝ ('a * 'a, r) C.k ∋ h  ⟼ h ∘ C.dup : ('a, r) C.k
+  *)  
   let dup (type a) (oka : a C.ok) : (a, a * a) k =
     cont oka (ok_pair oka oka) (C.dup oka)
-
+  
+  (** inl = Cont Φ
+      where 
+      r ≝ R.t, (Exl: in the category of λ-terms)
+      Φ ≝ ('a * 'b, r) C.k ∋ h  ⟼ unjoin h = (h1: ('a, r) C.k, h2: ('b, r) C.k)
+                                ⟼ (Exl ∘ unjoin) h : ('a, r) C.k
+  *)
   let inl (type a b) (oka : a C.ok) (okb : b C.ok) : (a, a * b) k =
-    cont oka (ok_pair oka okb) (C.inl oka okb)
+    Cont (LambdaCat.exl () () ** AFD.unjoin R.okr oka okb)
 
+  (** inl = Cont Φ
+      where 
+      r ≝ R.t, (Exr: in the category of λ-terms)
+      Φ ≝ ('a * 'b, r) C.k ∋ h  ⟼ unjoin h = (h1: ('a, r) C.k, h2: ('b, r) C.k)
+                                ⟼ (Exr ∘ unjoin) h : ('b, r) C.k
+  *)
   let inr (type a b) (oka : a C.ok) (okb : b C.ok) : (b, a * b) k =
-    cont okb (ok_pair oka okb) (C.inr oka okb)
+    Cont (LambdaCat.exr () () ** AFD.unjoin R.okr oka okb)
 
+  (** jam = Cont Φ
+      where 
+      r ≝ R.t, (Dup: in the category of λ-terms)
+      Φ ≝ ('a, r) C.k ∋ h   ⟼ Dup h = ('a, r) C.k * ('a, r) C.k
+                            ⟼ join (Dup h) : ('a, r) C.k
+  *)
   let jam (type a) (oka : a C.ok) : (a * a, a) k =
-    cont (ok_pair oka oka) oka (C.jam oka)
+    Cont (AFD.join R.okr oka oka ** LambdaCat.dup ())
 
   let ok_unit = C.ok_unit
 
   let ti oka =
-    cont ok_unit oka (C.ti oka)
+    Cont (fun _ -> C.ti R.okr)
 
   let it oka =
     cont oka ok_unit (C.it oka)

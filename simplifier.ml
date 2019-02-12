@@ -159,15 +159,15 @@ let rec apply_rewriting_rules_once (seq_list: intern_node flattened_composition 
     | _ -> None 
     in
   let apply_binary_rules_once morph1 morph2 = match morph1, morph2 with
-    | f, Morph (_, _, Identity _) (** f . id = f *)
-    | Morph (_, _, Identity _), f (** id . f = f *) -> 
+    | f, Morph (_, _, Identity _) (** f ∘ id = f *)
+    | Morph (_, _, Identity _), f (** id ∘ f = f *) -> 
       Some (Wrap f)
-    | Morph (_, _, Exl (_, _)), Appl (_, _, Fork (_, _, _, seq, _)) (** Exl . (f Δ g) = f *) -> 
+    | Morph (_, _, Exl (_, _)), Appl (_, _, Fork (_, _, _, seq, _)) (** Exl ∘ (f Δ g) = f *) -> 
       Some (Wrap seq)
-    | Morph (_, _, Exr (_, _)), Appl (_, _, Fork (_, _, _, _, seq)) (** Exr . (f Δ g) = g *) -> 
+    | Morph (_, _, Exr (_, _)), Appl (_, _, Fork (_, _, _, _, seq)) (** Exr ∘ (f Δ g) = g *) -> 
       Some (Wrap seq)
     | Appl (ok_in, ok_out, Fork (oka, okc, okd, seqf, seqg)), h
-      (** (f Δ g) . h = (f . h) Δ (g . h) *) -> 
+      (** (f Δ g) ∘ h = (f ∘ h) Δ (g ∘ h) *) -> 
       let Seq (okf_in, okf_out, seqf_list) = seqf in
       let Seq (okg_in, okg_out, seqg_list) = seqg in
       let okh_in, okh_out = get_oks h in
@@ -177,14 +177,14 @@ let rec apply_rewriting_rules_once (seq_list: intern_node flattened_composition 
       Some (Wrap (Appl (okh_in, ok_out, Fork (okh_in, okc, okd, new_seqf, new_seqg)))) 
     | Morph (_, ok_out, Apply _), 
       Appl (ok_in, _, Fork (_, _, _, Seq (_, _, [Appl (_, _, Curry (_, _, _, seqf))]), seqg)) 
-      (** apply . (Curry f Δ g) = f . (id Δ g) *) ->
+      (** apply ∘ (Curry f Δ g) = f ∘ (id Δ g) *) ->
       let Seq (okf_in, okf_out, seqf_list) = seqf in
       let Seq (_, okg_out, _) = seqg in
       let fork_id_g = 
         Appl (ok_in, okf_in, Fork (ok_in, ok_in, okg_out, Seq (ok_in, ok_in, [Morph (ok_in, ok_in, Identity ok_in)]), seqg)) in
       Some (Wrap (Seq (ok_in, ok_out, seqf_list @ [fork_id_g])))
     | Appl (_, okcurry_out, Curry (_, okb, _, seqf)), g 
-      (** (Curry f) . g = Curry (f . (g . Exl Δ Exr)) *) -> 
+      (** (Curry f) ∘ g = Curry (f ∘ (g ∘ Exl Δ Exr)) *) -> 
       let Seq (okf_in, okf_out, seqf_list) = seqf in
       let okg_in, okg_out = get_oks g in
       let okgExl_in = OkPair (okg_in, okb) in
@@ -196,7 +196,7 @@ let rec apply_rewriting_rules_once (seq_list: intern_node flattened_composition 
         Seq (okgExl_in, okf_out, seqf_list @ [fork_gExl_Exr]) in
       Some (Wrap (Appl (okg_in, okcurry_out, Curry (okg_in, okb, okf_out, seqf_fork_gExl_Exr))))
     | f, g when snd (get_oks f) = OkUnit
-      (** f . g = it, as soon as f: A -> unit *) -> 
+      (** f ∘ g = it, as soon as f: A -> unit *) -> 
       let ok_in = fst (get_oks g) in
       let it = Morph (ok_in, OkUnit, It ok_in) in 
       Some (Wrap it)
