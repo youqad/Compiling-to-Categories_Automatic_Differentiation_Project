@@ -1,5 +1,7 @@
 let typecheck_only = ref false
 
+let print_eta_expansion = ref false
+
 let without_oks = ref false
 
 let simplify = ref true
@@ -9,6 +11,9 @@ let compact = ref false
 let options = Arg.([
   "--typecheck", Unit (fun () -> typecheck_only := true),
   " Typecheck and stop.";
+
+  "--print-eta-expansion", Unit (fun () -> print_eta_expansion := true),
+  " If in typecheck-only mode: print the eta-expanded form on top of that (useful for tests).";
 
   "--no-ok", Unit (fun () -> without_oks := true),
   " Do not produce 'ok' witnesses.";

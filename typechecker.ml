@@ -164,8 +164,9 @@ let eta_expanse : program_with_locations -> program_with_locations =
 let program : program_with_locations -> program_with_locations = fun source ->
   let xsource = check_program source in
   if !Options.typecheck_only then 
+  if !Options.print_eta_expansion then
    (List.iter (
-      function (_, t') -> Printf.eprintf "%s:\n\n" (string_of_term' (Position.value t'))) 
+      function (_, t') -> Printf.eprintf "\n\n%s:\n" (string_of_term' (Position.value t'))) 
       (eta_expanse xsource); 
    exit 0);
   eta_expanse xsource
